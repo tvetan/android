@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Work Hours Tracker</string>
+    <string name="empty"></string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+
+    <string-array name="jobs_spinner_array">
+        <item>"A to Z"</item>
+        <item>"Z to A"</item>
+        <item>"Recent Activities"</item>
+    </string-array>
+    <string-array name="entries_spinner_array">
+        <item>"Days"</item>
+        <item>"Weeks"</item>
+        <item>"Months"</item>
+    </string-array>
+    <string-array name="pay_periods_spinner_array">
+        <item>"By Job"</item>
+        <item>"By Title"</item>
+        <item>"By Other"</item>
+    </string-array>
+
+    <string name="title_activity_start_clock">StartClockActivity</string>
+    <!-- Done bar strings -->
+    <string name="done">Done</string>
+    <string name="cancel">Cancel</string>
+    <string name="title_activity_edit_job">EditJobActivity</string>
+
+</resources>
