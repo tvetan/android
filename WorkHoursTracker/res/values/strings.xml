@@ -5,6 +5,7 @@
     <string name="empty"></string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    
 
     <string-array name="jobs_spinner_array">
         <item>"A to Z"</item>
@@ -27,5 +28,10 @@
     <string name="done">Done</string>
     <string name="cancel">Cancel</string>
     <string name="title_activity_edit_job">EditJobActivity</string>
-
+    <string name="title_activity_export_selection">ExportSelectionActivity</string>
+	<string name="undo_clock_in">Undo Clock in?</string>
+	<string name="stop_clock">Stop Clock</string>
+	<string name="total">Total</string>
+	<string name="straight_time">straight time</string>
+	<string name="time_and_a_half">time and a half</string>
 </resources>

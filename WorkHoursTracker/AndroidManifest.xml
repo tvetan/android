@@ -24,7 +24,7 @@
         </activity>
         <activity
             android:name="com.cai.workhourstracker.StartClockActivity"
-            android:label="@string/title_activity_start_clock"
+            android:label="@string/empty"
             android:parentActivityName="com.cai.workhourstracker.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -36,6 +36,14 @@
         <activity
             android:name="com.cai.workhourstracker.EditJobActivity"
             android:label="@string/title_activity_edit_job" >
+        </activity>
+        <activity
+            android:name="com.cai.workhourstracker.ExportSelectionActivity"
+            android:label="@string/title_activity_export_selection"
+            android:parentActivityName="com.cai.workhourstracker.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cai.workhourstracker.MainActivity" />
         </activity>
     </application>
 

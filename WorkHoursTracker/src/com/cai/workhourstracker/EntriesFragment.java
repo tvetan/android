@@ -1,6 +1,7 @@
 package com.cai.workhourstracker;
 
 import android.app.ActionBar;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -30,7 +31,8 @@ public class EntriesFragment extends Fragment {
 				new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						// "Done"
+						startActivity(new Intent(getActivity(),
+								ExportSelectionActivity.class));
 
 					}
 				});

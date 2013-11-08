@@ -4,6 +4,7 @@ public class Job {
 	private int id;
 	private String name;
 	private String created_at;
+	private Boolean isWorking;
 
 	// constructors
 	public Job() {
@@ -17,6 +18,12 @@ public class Job {
 		this.id = id;
 		this.name = name;
 	}
+	
+	public Job(int id, String name, Boolean isWorking) {
+		this.id = id;
+		this.name = name;
+		this.isWorking = isWorking;
+	}
 
 	public int getId() {
 		return id;
@@ -26,6 +33,13 @@ public class Job {
 		this.id = id;
 	}
 
+	public Boolean getIsWorking() {
+		return isWorking;
+	}
+
+	public void setIsWorking(Boolean isWorking) {
+		this.isWorking = isWorking;
+	}
 	public String getName() {
 		return name;
 	}
