@@ -4,7 +4,16 @@ public class Job {
 	private int id;
 	private String name;
 	private String created_at;
-	private Boolean isWorking;
+	private boolean isWorking;
+	private Integer hourPrice;
+
+	public Integer getHourPrice() {
+		return hourPrice;
+	}
+
+	public void setHourPrice(Integer hourPrice) {
+		this.hourPrice = hourPrice;
+	}
 
 	// constructors
 	public Job() {
@@ -19,10 +28,17 @@ public class Job {
 		this.name = name;
 	}
 	
-	public Job(int id, String name, Boolean isWorking) {
-		this.id = id;
+	public Job( String name, boolean isWorking) {
+ 
 		this.name = name;
 		this.isWorking = isWorking;
+	}
+
+	public Job( String name, boolean isWorking, Integer hourPrice) {
+ 
+		this.name = name;
+		this.isWorking = isWorking;
+		this.hourPrice = hourPrice;
 	}
 
 	public int getId() {

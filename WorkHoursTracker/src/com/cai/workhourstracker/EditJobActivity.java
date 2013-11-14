@@ -1,7 +1,5 @@
 package com.cai.workhourstracker;
 
-
-
 import android.os.Bundle;
 import android.app.ActionBar;
 import android.app.Activity;
@@ -10,17 +8,18 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 
-public class EditJobActivity extends Activity {
+public class EditJobActivity extends Activity implements AdapterView.OnItemSelectedListener{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		// BEGIN_INCLUDE (inflate_set_custom_view)
 		// Inflate a "Done" custom action bar view to serve as the "Up"
 		// affordance.
-		//final LayoutInflater inflater = (LayoutInflater) getActionBar()
-		//		.getThemedContext().getSystemService(LAYOUT_INFLATER_SERVICE);
- 
+		// final LayoutInflater inflater = (LayoutInflater) getActionBar()
+		// .getThemedContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+
 		LayoutInflater inflater = (LayoutInflater) this
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		final View customActionBarView = inflater.inflate(
@@ -65,4 +64,17 @@ public class EditJobActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 	// END_INCLUDE (handle_cancel)
+
+	@Override
+	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
+			long arg3) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 }

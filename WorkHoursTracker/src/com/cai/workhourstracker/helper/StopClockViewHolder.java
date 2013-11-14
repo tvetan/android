@@ -8,6 +8,19 @@ import android.widget.TextView;
 public class StopClockViewHolder {
 	private TextView comment;
 	private TextView fullDate;
+	private TextView id;
+
+	public TextView getId() {
+		return id;
+	}
+
+	public void setId(TextView id) {
+		this.id = id;
+	}
+
+	public void setFullDate(TextView fullDate) {
+		this.fullDate = fullDate;
+	}
 
 	public TextView getComment() {
 		return comment;
@@ -29,5 +42,6 @@ public class StopClockViewHolder {
 
 		comment = (TextView) v.findViewById(R.id.comment);
 		fullDate = (TextView) v.findViewById(R.id.full_date);
+		id = (TextView) v.findViewById(R.id.entry_id);
 	}
 }

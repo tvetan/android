@@ -83,18 +83,40 @@ public class MainActivity extends FragmentActivity implements
 
 		db = new DatabaseHelper(getApplicationContext());
 
-		// int last_index = a.size();
-		// Job job = a.get(last_index - 1);
-		// String job_as_string = Integer.toString(job.getId());
-		// Toast.makeText(this, job_as_string, Toast.LENGTH_LONG).show();
+		//addJobs();
+		//addEntries();
+		db.closeDB();
+	}
+
+	public void addJobs() {
 
 		Tag tag1 = new Tag("Shopping");
 		long tag1_id = db.createTag(tag1);
-		Job todo1 = new Job("iPhone 5S");
+		Job todo1 = new Job("Programmer", false, 123);
 		db.createJob(todo1, new long[] { tag1_id });
-		String ab = Integer.toString(db.getToDoCount());
 
-		List<Job> a = db.getAllToDos();
+		todo1 = new Job("Writer", false, 1123);
+		db.createJob(todo1, new long[] { tag1_id });
+
+		todo1 = new Job("Tennis Player", true, 1123);
+		db.createJob(todo1, new long[] { tag1_id });
+
+		todo1 = new Job("Worker", false, 11);
+		db.createJob(todo1, new long[] { tag1_id });
+
+		todo1 = new Job("QA", false, 11);
+		db.createJob(todo1, new long[] { tag1_id });
+		todo1 = new Job("QA", false, 11);
+		db.createJob(todo1, new long[] { tag1_id });
+		todo1 = new Job("QA", false, 11);
+		db.createJob(todo1, new long[] { tag1_id });
+
+		todo1 = new Job("Support", true, 11);
+		db.createJob(todo1, new long[] { tag1_id });
+	}
+
+	public void addEntries() {
+		List<Job> a = db.getAllJobs();
 
 		SimpleDateFormat dateFormat = new SimpleDateFormat(
 				"yyyy-MM-dd HH:mm:ss", Locale.getDefault());
@@ -103,30 +125,29 @@ public class MainActivity extends FragmentActivity implements
 		String creationDate = dateFormat.format(cal.getTime());
 		cal.add(Calendar.HOUR_OF_DAY, 1);
 		String stopDate = dateFormat.format(cal.getTime());
-		BigDecimal money = new BigDecimal(3.56);
-		Entry entry = new Entry("very very", creationDate, stopDate, a
-				.get(0).getId(), money, a.get(0));
-		// Entry entry = new Entry("comment",money);
-		long entry_id = db.createEntry(entry);
-		String entryIdString = String.valueOf(entry_id);
-		// String entriesAll = db.getAllEntries().toString();
-		//Toast.makeText(this, entryIdString, Toast.LENGTH_LONG).show();
-		
-		Entry entryGetById = db.getEntryById(entry_id);
-		Toast.makeText(this, entryGetById.getComment(), Toast.LENGTH_LONG).show();
-		
-		
-		
-		// text.setText("Some Text");
-		// Toast.makeText(this, ab, Toast.LENGTH_SHORT).show();
+		Integer money = 356;
+		Entry entry = new Entry("some comment", creationDate, stopDate, a
+				.get(2).getId(), money, 33);
 
-		// // Creating tags
-		// Log.d("TODO Count", "Tag Count: " + db.getToDoCount());
-		// // TextView text = (TextView) findViewById(R.id.mine1);
-		// String a = Integer.toString(db.getToDoCount());
-		// // text.setText("Some Text");
-		// Toast.makeText(this, a, Toast.LENGTH_SHORT).show();
+		db.createEntry(entry);
 
+		cal.add(Calendar.DATE, 1);
+		creationDate = dateFormat.format(cal.getTime());
+		cal.add(Calendar.MONTH, 1);
+		stopDate = dateFormat.format(cal.getTime());
+		entry = new Entry("com", creationDate, stopDate, a.get(3).getId(),
+				money, 177);
+
+		db.createEntry(entry);
+
+		cal.add(Calendar.DAY_OF_WEEK, 1);
+		creationDate = dateFormat.format(cal.getTime());
+		cal.add(Calendar.WEEK_OF_YEAR, 3);
+		stopDate = dateFormat.format(cal.getTime());
+		entry = new Entry("com11", creationDate, stopDate, a.get(4).getId(),
+				444, 11);
+
+		db.createEntry(entry);
 	}
 
 	@Override

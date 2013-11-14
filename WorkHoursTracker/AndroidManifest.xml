@@ -12,6 +12,7 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
+        android:launchMode="singleTop"
         android:theme="@style/AppTheme.Light" >
         <activity
             android:name="com.cai.workhourstracker.MainActivity"
@@ -25,13 +26,14 @@
         <activity
             android:name="com.cai.workhourstracker.StartClockActivity"
             android:label="@string/empty"
+            android:launchMode="singleTop"
             android:parentActivityName="com.cai.workhourstracker.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.cai.workhourstracker.MainActivity" />
         </activity>
         <activity
-            android:name="com.cai.workhourstracker.DoneBarActivity"
+            android:name="com.cai.workhourstracker.AddJobActivity"
             android:parentActivityName=".MainActivity" />
         <activity
             android:name="com.cai.workhourstracker.EditJobActivity"
@@ -44,6 +46,22 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.cai.workhourstracker.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.cai.workhourstracker.SingleEntryActivity"
+            android:label="@string/empty"
+            android:parentActivityName="com.cai.workhourstracker.StartClockActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cai.workhourstracker.StartClockActivity" />
+        </activity>
+        <activity
+            android:name="com.cai.workhourstracker.EditEntryActivity"
+            android:label="@string/title_activity_edit_entry"
+            android:parentActivityName="com.cai.workhourstracker.SingleEntryActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cai.workhourstracker.SingleEntryActivity" />
         </activity>
     </application>
 

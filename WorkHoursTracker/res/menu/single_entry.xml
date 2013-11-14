@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/edit_entry"
+        android:icon="@drawable/ic_action_edit"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="Edit Entry"/>
+    <item
+        android:id="@+id/delete_entry"
+        android:icon="@drawable/ic_action_discard"
+        android:orderInCategory="200"
+        android:showAsAction="ifRoom"
+        android:title="Delete Entry"/>
+
+</menu>

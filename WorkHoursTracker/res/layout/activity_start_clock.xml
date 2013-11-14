@@ -10,8 +10,6 @@
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
         android:background="@drawable/textlines"
         android:padding="10dp" >
 
@@ -30,7 +28,7 @@
         </FrameLayout>
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/start_clock_job_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="TextView"
@@ -118,10 +116,9 @@
         android:id="@+id/entries_start_clock"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:headerDividersEnabled="true"
-        android:drawSelectorOnTop="true">
+ 
+        android:drawSelectorOnTop="true"
+        android:headerDividersEnabled="true" >
     </ListView>
-    
+
 </LinearLayout>

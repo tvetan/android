@@ -6,20 +6,14 @@ import java.util.Date;
 public class PayPeriod {
 
 	private int id;
-	private Date date;
-	private double workTime;
-	private int JobId;
-	private Job job;
-	private BigDecimal money;
+	private String date;
+	private int jobId;
+	private Integer money;
 
-	public PayPeriod(int id, Date date, double workTime, int jobId, Job job,
-			BigDecimal money) {
-		super();
-		this.id = id;
+	public PayPeriod(String date, int jobId, Integer money) {
+
 		this.date = date;
-		this.workTime = workTime;
-		JobId = jobId;
-		this.job = job;
+		this.jobId = jobId;
 		this.money = money;
 	}
 
@@ -31,44 +25,27 @@ public class PayPeriod {
 		this.id = id;
 	}
 
-	public Date getDate() {
+	public String getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 
-	public double getWorkTime() {
-		return workTime;
-	}
-
-	public void setWorkTime(double workTime) {
-		this.workTime = workTime;
-	}
-
 	public int getJobId() {
-		return JobId;
+		return jobId;
 	}
 
 	public void setJobId(int jobId) {
-		JobId = jobId;
+		this.jobId = jobId;
 	}
 
-	public Job getJob() {
-		return job;
-	}
-
-	public void setJob(Job job) {
-		this.job = job;
-	}
-
-	public BigDecimal getMoney() {
+	public Integer getMoney() {
 		return money;
 	}
 
-	public void setMoney(BigDecimal money) {
+	public void setMoney(Integer money) {
 		this.money = money;
 	}
-
 }
