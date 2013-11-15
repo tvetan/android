@@ -94,8 +94,7 @@ public class EditEntryActivity extends FragmentActivity implements
 		tags = (Spinner) findViewById(R.id.edit_entry_tags);
 		baseRate = (EditText) findViewById(R.id.edit_entry_base_rate);
 
-		 
-		 baseRate.setText(String.valueOf(entry.getBaseRate()));
+		baseRate.setText(String.valueOf(entry.getBaseRate()));
 
 		setSpinnerSingleValue(tags, "None");
 

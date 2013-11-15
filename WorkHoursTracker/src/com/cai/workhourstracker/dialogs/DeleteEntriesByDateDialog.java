@@ -13,7 +13,6 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
-import android.widget.Toast;
 
 public class DeleteEntriesByDateDialog extends DialogFragment {
 
@@ -29,8 +28,8 @@ public class DeleteEntriesByDateDialog extends DialogFragment {
 		return new DeleteEntriesByDateDialog();
 	}
 
-	DatePicker datePicker;
-	IDeleteEntriesListener listener;
+	private DatePicker datePicker;
+	private IDeleteEntriesListener listener;
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {

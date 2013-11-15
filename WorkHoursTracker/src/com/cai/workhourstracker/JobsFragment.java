@@ -52,8 +52,6 @@ public class JobsFragment extends Fragment implements
 	// String[] headers = new String[] { "On the clock", "Of the clock" };
 	List<String> headers = new ArrayList<String>(Arrays.asList("On the clock",
 			"Of the clock"));
-	// this counts how many Gallery's have been initialized
-	// Set view initialization to false while the it is being built
 	private boolean initializedView = false;
 	private static final int REQUEST_CODE = 10;
 
@@ -75,7 +73,6 @@ public class JobsFragment extends Fragment implements
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onActivityCreated(savedInstanceState);
 
 		listView = (GroupListView) getActivity().findViewById(R.id.lsComposer);
@@ -97,11 +94,6 @@ public class JobsFragment extends Fragment implements
 
 		all.add(new Pair<String, List<Job>>(headers.get(0), onTheClock));
 		all.add(new Pair<String, List<Job>>(headers.get(1), ofTheClock));
-
-		// String[] res = new String[all.size()];
-		// for (int i = 0; i < all.size(); i++) {
-		// res[i] = all.get(i).first;
-		// }
 
 		listView.setOnItemLongClickListener(new OnItemLongClickListener() {
 
@@ -211,7 +203,6 @@ public class JobsFragment extends Fragment implements
 
 	public class SectionComposerAdapter extends GroupViewAdapter {
 		List<Pair<String, List<Job>>> all;
-		// String[] sectionHeaders;
 		List<String> sectionHeaders;
 
 		public SectionComposerAdapter(List<String> sectionHeaders,
@@ -226,6 +217,7 @@ public class JobsFragment extends Fragment implements
 			for (int i = 0; i < all.size(); i++) {
 				res += all.get(i).second.size();
 			}
+			
 			return res;
 		}
 
@@ -274,8 +266,8 @@ public class JobsFragment extends Fragment implements
 
 			TextView jobName = (TextView) res.findViewById(R.id.jobName);
 			TextView jobId = (TextView) res.findViewById(R.id.jobId);
-
 			Job job = getItem(position);
+			
 			jobName.setText(job.getName());
 			jobId.setText(String.valueOf(job.getId()));
 
@@ -322,9 +314,7 @@ public class JobsFragment extends Fragment implements
 		@Override
 		public String[] getSections() {
 			return sectionHeaders.toArray(new String[sectionHeaders.size()]);
-
 		}
-
 	}
 
 	public void setNewTitle() {
@@ -357,42 +347,31 @@ public class JobsFragment extends Fragment implements
 			if (counterChecked == 0) {
 				mActionMode.finish();
 			}
-
 		}
-
 	}
 
 	@Override
 	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
 			long arg3) {
-		Toast.makeText(getActivity(), "test", Toast.LENGTH_SHORT).show();
 		if (arg2 == 0) {
-			// Collections.sort(onTheClock, new JobNameComparator());
-			// Collections.sort(ofTheClock, new JobNameComparator());
-
 			for (int i = 0; i < all.size(); i++) {
 				Collections.sort(all.get(i).second, new JobNameComparator());
 			}
-			// all.add(new Pair<String, List<Job>>(headers[0], onTheClock));
-			// all.add(new Pair<String, List<Job>>(headers[1], ofTheClock));
-			listView.setAdapter(adapter = new SectionComposerAdapter(headers,
-					all));
+			
+			listView.setAdapter(adapter = new SectionComposerAdapter(headers, all));
 		} else if (arg2 == 1) {
 
 			for (int i = 0; i < all.size(); i++) {
-				Collections.sort(all.get(i).second,
-						new JobNameReverseComparator());
+				Collections.sort(all.get(i).second, new JobNameReverseComparator());
 			}
-			listView.setAdapter(adapter = new SectionComposerAdapter(headers,
-					all));
-			Toast.makeText(getActivity(), "sdf", Toast.LENGTH_LONG).show();
+			
+			listView.setAdapter(adapter = new SectionComposerAdapter(headers, all));
 		}
 	}
 
 	@Override
 	public void onNothingSelected(AdapterView<?> arg0) {
 		// TODO Auto-generated method stub
-
 	}
 
 	private ActionMode.Callback modeCallBack = new ActionMode.Callback() {

@@ -17,9 +17,8 @@
         <item>"Months"</item>
     </string-array>
     <string-array name="pay_periods_spinner_array">
-        <item>"By Job"</item>
-        <item>"By Title"</item>
-        <item>"By Other"</item>
+        <item>By Date</item>
+        <item>By Job</item>
     </string-array>
 
     <string name="title_activity_start_clock">StartClockActivity</string>
@@ -35,5 +34,7 @@
     <string name="time_and_a_half">time and a half</string>
     <string name="title_activity_single_entry">SingleEntryActivity</string>
     <string name="title_activity_edit_entry">EditEntryActivity</string>
+    <string name="delete_entries_dialog">This will delete entries for all jobs that are older than the date you select</string>
+    <string name="delete">Delete</string>
 
 </resources>

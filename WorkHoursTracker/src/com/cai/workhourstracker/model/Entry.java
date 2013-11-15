@@ -3,17 +3,35 @@ package com.cai.workhourstracker.model;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.cai.workhourstracker.helper.Utils;
+
 import android.util.Log;
 
 public class Entry {
 	private int id;
+	private int jobId;
+	private Integer payPeriodId;
 	private String comment;
 	private String startClock;
 	private String stopClock;
-	private int jobId;
 	private Integer earnedMoney;
-	// TODO I have to add it in the database when the base rate is x2
 	private Integer baseRate;
+
+	public Integer getPayPeriodId() {
+		return payPeriodId;
+	}
+
+	public void setPayPeriodId(Integer payPeriodId) {
+		this.payPeriodId = payPeriodId;
+	}
+
+	public Integer getEarnedMoney() {
+		return earnedMoney;
+	}
+
+	public void setEarnedMoney(Integer earnedMoney) {
+		this.earnedMoney = earnedMoney;
+	}
 
 	public Integer getBaseRate() {
 		return baseRate;
@@ -112,7 +130,6 @@ public class Entry {
 		this.stopClock = stopClock;
 		this.jobId = jobId;
 		this.earnedMoney = earnedMoney;
-
 	}
 
 	public Entry(String comment, String startClock, String stopClock,
@@ -124,27 +141,40 @@ public class Entry {
 		this.jobId = jobId;
 		this.earnedMoney = earnedMoney;
 		this.baseRate = baseRate;
-		
 
 	}
 
 	public Entry(String comment, String startClock, String stopClock,
-			int jobId, Integer earnedMoney ) {
+			Integer jobId, Integer earnedMoney, Integer baseRate,
+			Integer payPeriodId) {
 
 		this.comment = comment;
 		this.startClock = startClock;
 		this.stopClock = stopClock;
 		this.jobId = jobId;
 		this.earnedMoney = earnedMoney;
-		 
+		this.baseRate = baseRate;
+		this.payPeriodId = payPeriodId;
+
 	}
 
-	public Entry(int id, String comment, String startClock, String stopClock ) {
+	public Entry(String comment, String startClock, String stopClock,
+			int jobId, Integer earnedMoney) {
+
+		this.comment = comment;
+		this.startClock = startClock;
+		this.stopClock = stopClock;
+		this.jobId = jobId;
+		this.earnedMoney = earnedMoney;
+
+	}
+
+	public Entry(int id, String comment, String startClock, String stopClock) {
 
 		this.id = id;
 		this.comment = comment;
 		this.startClock = startClock;
 		this.stopClock = stopClock;
-		 
+
 	}
 }

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:id="@+id/header"
+    android:background="#bfb"
+    android:padding="6dp"
+    android:textColor="#000"
+    android:textStyle="bold"  >
+
+    <TextView
+        android:id="@+id/group_view_header_group_criteria"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="a"
+        android:layout_weight="2" />
+
+    <TextView
+        android:id="@+id/group_view_header_work_hours"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="a"
+        android:layout_weight="1" />
+
+    <TextView
+        android:id="@+id/group_view_header_money_earned"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="a" 
+        android:layout_weight="1"/>
+
+</LinearLayout>

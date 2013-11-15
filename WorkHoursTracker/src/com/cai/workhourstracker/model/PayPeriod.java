@@ -1,7 +1,6 @@
 package com.cai.workhourstracker.model;
 
-import java.math.BigDecimal;
-import java.util.Date;
+ 
 
 public class PayPeriod {
 
@@ -10,6 +9,11 @@ public class PayPeriod {
 	private int jobId;
 	private Integer money;
 
+	
+	public PayPeriod(){
+		
+	}
+	
 	public PayPeriod(String date, int jobId, Integer money) {
 
 		this.date = date;

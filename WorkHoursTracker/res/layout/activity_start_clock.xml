@@ -52,7 +52,8 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textAlignment="center" >
+            android:textAlignment="center"
+            android:paddingLeft="30dp" >
 
             <TextView
                 style="?android:actionBarTabTextStyle"
@@ -71,7 +72,8 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textAlignment="center" >
+            android:textAlignment="center"
+            android:paddingLeft="20dp"  >
 
             <TextView
                 style="?android:actionBarTabTextStyle"
@@ -116,7 +118,6 @@
         android:id="@+id/entries_start_clock"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
- 
         android:drawSelectorOnTop="true"
         android:headerDividersEnabled="true" >
     </ListView>

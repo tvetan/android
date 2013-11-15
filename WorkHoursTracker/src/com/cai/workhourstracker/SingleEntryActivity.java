@@ -1,6 +1,7 @@
 package com.cai.workhourstracker;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -9,6 +10,10 @@ import java.util.Locale;
 import org.w3c.dom.Comment;
 
 import com.cai.workhourstracker.JobsFragment.SectionComposerAdapter;
+import com.cai.workhourstracker.dialogs.DeleteEntriesByDateDialog;
+import com.cai.workhourstracker.dialogs.DeleteEntriesByDateDialog.IDeleteEntriesListener;
+import com.cai.workhourstracker.dialogs.DeleteEntriestConfirmDialog;
+import com.cai.workhourstracker.dialogs.DeleteEntriestConfirmDialog.IDeleteEntriesConfirm;
 import com.cai.workhourstracker.helper.DatabaseHelper;
 import com.cai.workhourstracker.model.Entry;
 import com.cai.workhourstracker.model.Job;
@@ -20,6 +25,7 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,7 +35,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 
 public class SingleEntryActivity extends FragmentActivity implements
-		DeleteEntryDialogFragment.NoticeDialogListener {
+		DeleteEntryDialogFragment.NoticeDialogListener{
 
 	private DatabaseHelper db;
 	private TextView jobName;
@@ -60,6 +66,7 @@ public class SingleEntryActivity extends FragmentActivity implements
 		int jobId = entry.getJobId();
 		job = db.getJobById(jobId);
 		db.closeDB();
+		
 		jobName = (TextView) findViewById(R.id.single_entry_job_name);
 		entryDate = (TextView) findViewById(R.id.single_entry_date);
 		startHour = (TextView) findViewById(R.id.single_entry_start_clock);
@@ -70,9 +77,6 @@ public class SingleEntryActivity extends FragmentActivity implements
 		jobName.setText(job.getName() + " Entry");
 		comment.setText(entry.getComment());
 
-		// Friday, 08 November 2013
-		// String oldstring = "2011-01-18 00:00:00.0";
-
 		SimpleDateFormat dateFormat = new SimpleDateFormat(
 				"yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 		SimpleDateFormat formatterFullDate = new SimpleDateFormat(
@@ -81,7 +85,6 @@ public class SingleEntryActivity extends FragmentActivity implements
 				Locale.getDefault());
 
 		try {
-
 			Date startClock = dateFormat.parse(entry.getStartClock());
 			Date endClock = dateFormat.parse(entry.getStopClock());
 			int workHours = (int) ((endClock.getTime() - startClock.getTime()) / (1000 * 60 * 60));
@@ -93,22 +96,14 @@ public class SingleEntryActivity extends FragmentActivity implements
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		// String newstring = new SimpleDateFormat("yyyy-MM-dd").format(date);
 	}
 
-	/**
-	 * Set up the {@link android.app.ActionBar}.
-	 */
 	private void setupActionBar() {
-
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.single_entry, menu);
 		return true;
 	}
@@ -163,7 +158,6 @@ public class SingleEntryActivity extends FragmentActivity implements
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == RESULT_OK && requestCode == 100) {
-
 			String startClock = data.getExtras().getString("startClock");
 			String stopClock = data.getExtras().getString("stopClock");
 			String commentString = data.getExtras().getString("comment");

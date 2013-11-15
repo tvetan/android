@@ -1,6 +1,7 @@
 package com.cai.workhourstracker;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -9,9 +10,14 @@ import java.util.List;
 import java.util.Locale;
 
 import com.cai.workhourstracker.adapters.TabsPagerAdapter;
+import com.cai.workhourstracker.dialogs.DeleteEntriesByDateDialog;
+import com.cai.workhourstracker.dialogs.DeleteEntriestConfirmDialog;
+import com.cai.workhourstracker.dialogs.DeleteEntriesByDateDialog.IDeleteEntriesListener;
+import com.cai.workhourstracker.dialogs.DeleteEntriestConfirmDialog.IDeleteEntriesConfirm;
 import com.cai.workhourstracker.helper.DatabaseHelper;
 import com.cai.workhourstracker.model.Entry;
 import com.cai.workhourstracker.model.Job;
+import com.cai.workhourstracker.model.PayPeriod;
 import com.cai.workhourstracker.model.Tag;
 
 import android.app.ActionBar;
@@ -33,12 +39,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends FragmentActivity implements
-		ActionBar.TabListener {
+		ActionBar.TabListener, IDeleteEntriesListener, IDeleteEntriesConfirm {
 
 	private ViewPager viewPager;
 	private TabsPagerAdapter mAdapter;
 	private ActionBar actionBar;
-	// Tab titles
 	private String[] tabs = { "JOBS", "ENTRIES", "PAY PERIODS" };
 
 	DatabaseHelper db;
@@ -67,8 +72,6 @@ public class MainActivity extends FragmentActivity implements
 
 			@Override
 			public void onPageSelected(int position) {
-				// on changing the page
-				// make respected tab selected
 				actionBar.setSelectedNavigationItem(position);
 			}
 
@@ -83,70 +86,142 @@ public class MainActivity extends FragmentActivity implements
 
 		db = new DatabaseHelper(getApplicationContext());
 
-		//addJobs();
-		//addEntries();
+		// addJobs();
+		// addPayPeriods();
+		// addEntries();
 		db.closeDB();
 	}
 
-	public void addJobs() {
-
+	private void addJobs() {
 		Tag tag1 = new Tag("Shopping");
 		long tag1_id = db.createTag(tag1);
-		Job todo1 = new Job("Programmer", false, 123);
-		db.createJob(todo1, new long[] { tag1_id });
+		Job job = new Job("Programmer", false, 123);
+		db.createJob(job, new long[] { tag1_id });
 
-		todo1 = new Job("Writer", false, 1123);
-		db.createJob(todo1, new long[] { tag1_id });
+		job = new Job("Writer", false, 1123);
+		db.createJob(job, new long[] { tag1_id });
 
-		todo1 = new Job("Tennis Player", true, 1123);
-		db.createJob(todo1, new long[] { tag1_id });
+		job = new Job("Tennis Player", true, 1123);
+		db.createJob(job, new long[] { tag1_id });
 
-		todo1 = new Job("Worker", false, 11);
-		db.createJob(todo1, new long[] { tag1_id });
+		job = new Job("Worker", false, 1234);
+		db.createJob(job, new long[] { tag1_id });
 
-		todo1 = new Job("QA", false, 11);
-		db.createJob(todo1, new long[] { tag1_id });
-		todo1 = new Job("QA", false, 11);
-		db.createJob(todo1, new long[] { tag1_id });
-		todo1 = new Job("QA", false, 11);
-		db.createJob(todo1, new long[] { tag1_id });
+		job = new Job("job", false, 12000);
+		db.createJob(job, new long[] { tag1_id });
 
-		todo1 = new Job("Support", true, 11);
-		db.createJob(todo1, new long[] { tag1_id });
+		job = new Job("QA", false, 11111);
+		db.createJob(job, new long[] { tag1_id });
+
+		job = new Job("Support", true, 9888);
+		db.createJob(job, new long[] { tag1_id });
 	}
 
-	public void addEntries() {
-		List<Job> a = db.getAllJobs();
+	private void addPayPeriods() {
+		List<Job> jobsList = db.getAllJobs();
 
 		SimpleDateFormat dateFormat = new SimpleDateFormat(
 				"yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-		Calendar cal = new GregorianCalendar();
-		cal.add(Calendar.HOUR_OF_DAY, 1);
-		String creationDate = dateFormat.format(cal.getTime());
-		cal.add(Calendar.HOUR_OF_DAY, 1);
-		String stopDate = dateFormat.format(cal.getTime());
-		Integer money = 356;
-		Entry entry = new Entry("some comment", creationDate, stopDate, a
-				.get(2).getId(), money, 33);
+		Calendar calendar = Calendar.getInstance();
+		String date = dateFormat.format(calendar.getTime());
 
-		db.createEntry(entry);
+		calendar.add(Calendar.HOUR_OF_DAY, 1);
+		PayPeriod payPeriod = new PayPeriod();
+		payPeriod.setDate(date);
+		payPeriod.setJobId(jobsList.get(0).getId());
+		payPeriod.setMoney(12324);
+		db.createPayPeriod(payPeriod);
+
+		calendar.add(Calendar.HOUR_OF_DAY, 12);
+		date = dateFormat.format(calendar.getTime());
+		payPeriod = new PayPeriod();
+		payPeriod.setDate(date);
+		payPeriod.setJobId(jobsList.get(1).getId());
+		payPeriod.setMoney(1234);
+		db.createPayPeriod(payPeriod);
+
+		calendar.add(Calendar.WEEK_OF_YEAR, 5);
+		date = dateFormat.format(calendar.getTime());
+		payPeriod = new PayPeriod();
+		payPeriod.setDate(date);
+		payPeriod.setJobId(jobsList.get(2).getId());
+		payPeriod.setMoney(1234);
+		db.createPayPeriod(payPeriod);
+
+		calendar.add(Calendar.WEEK_OF_MONTH, 2);
+		date = dateFormat.format(calendar.getTime());
+		payPeriod = new PayPeriod();
+		payPeriod.setDate(date);
+		payPeriod.setJobId(jobsList.get(4).getId());
+		payPeriod.setMoney(11);
+		db.createPayPeriod(payPeriod);
+
+	}
+
+	private void addEntries() {
+		List<Job> jobList = db.getAllJobs();
+		List<PayPeriod> payPeriodList = db.getAllPayPeriods();
+
+		SimpleDateFormat dateFormat = new SimpleDateFormat(
+				"yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+		Calendar cal = Calendar.getInstance();
 
 		cal.add(Calendar.DATE, 1);
-		creationDate = dateFormat.format(cal.getTime());
-		cal.add(Calendar.MONTH, 1);
-		stopDate = dateFormat.format(cal.getTime());
-		entry = new Entry("com", creationDate, stopDate, a.get(3).getId(),
-				money, 177);
-
+		String creationDate = dateFormat.format(cal.getTime());
+		cal.add(Calendar.DATE, 2);
+		String stopDate = dateFormat.format(cal.getTime());
+		Integer money = 356;
+		Entry entry = new Entry("some comment", creationDate, stopDate, jobList
+				.get(1).getId(), money, 33, 123);
 		db.createEntry(entry);
 
-		cal.add(Calendar.DAY_OF_WEEK, 1);
+		cal.add(Calendar.DATE, 2);
 		creationDate = dateFormat.format(cal.getTime());
-		cal.add(Calendar.WEEK_OF_YEAR, 3);
+		cal.add(Calendar.MONTH, 2);
 		stopDate = dateFormat.format(cal.getTime());
-		entry = new Entry("com11", creationDate, stopDate, a.get(4).getId(),
-				444, 11);
+		entry = new Entry("com", creationDate, stopDate,
+				jobList.get(1).getId(), money, 177, 453);
+		entry.setBaseRate(7700);
+		db.createEntry(entry);
 
+		cal.add(Calendar.DAY_OF_WEEK, 2);
+		creationDate = dateFormat.format(cal.getTime());
+		cal.add(Calendar.WEEK_OF_YEAR, 4);
+		stopDate = dateFormat.format(cal.getTime());
+		entry = new Entry("with pay period", creationDate, stopDate, jobList
+				.get(4).getId(), 444, 11, 123);
+		entry.setPayPeriodId(payPeriodList.get(3).getId());
+		entry.setBaseRate(1234);
+		db.createEntry(entry);
+
+		cal.add(Calendar.DAY_OF_WEEK, 3);
+		creationDate = dateFormat.format(cal.getTime());
+		cal.add(Calendar.WEEK_OF_YEAR, 2);
+		stopDate = dateFormat.format(cal.getTime());
+		entry = new Entry("without", creationDate, stopDate, jobList.get(4)
+				.getId(), 444, 11);
+		entry.setBaseRate(1111);
+		entry.setPayPeriodId(payPeriodList.get(0).getId());
+		db.createEntry(entry);
+
+		cal.add(Calendar.DAY_OF_WEEK, 3);
+		creationDate = dateFormat.format(cal.getTime());
+		cal.add(Calendar.WEEK_OF_YEAR, 2);
+		stopDate = dateFormat.format(cal.getTime());
+		entry = new Entry("1111", creationDate, stopDate, jobList.get(4)
+				.getId(), 444, 11);
+		entry.setBaseRate(11);
+		entry.setPayPeriodId(payPeriodList.get(2).getId());
+		db.createEntry(entry);
+
+		cal.add(Calendar.DAY_OF_WEEK, 3);
+		creationDate = dateFormat.format(cal.getTime());
+		cal.add(Calendar.WEEK_OF_YEAR, 2);
+		stopDate = dateFormat.format(cal.getTime());
+		entry = new Entry("112311", creationDate, stopDate, jobList.get(0)
+				.getId(), 44444, 11);
+		entry.setBaseRate(11);
+		entry.setPayPeriodId(payPeriodList.get(0).getId());
 		db.createEntry(entry);
 	}
 
@@ -165,7 +240,6 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
-
 		viewPager.setCurrentItem(tab.getPosition());
 	}
 
@@ -198,5 +272,35 @@ public class MainActivity extends FragmentActivity implements
 	public void showTimePickerWithCancelDialog(View v) {
 		DialogFragment newFragment = new TimerPickerFragmentWithCancel();
 		newFragment.show(getSupportFragmentManager(), "timePickerwithCancel");
+	}
+
+	public void showDialog(View view) {
+		DeleteEntriesByDateDialog dialog = DeleteEntriesByDateDialog
+				.newInstance();
+		dialog.show(getSupportFragmentManager(), "date");
+	}
+
+	@Override
+	public void onDeleteEntriesListener(Date date) {
+		SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM, yyyy",
+				Locale.getDefault());
+
+		DeleteEntriestConfirmDialog dialog = DeleteEntriestConfirmDialog
+				.newInstance(formatter.format(date));
+		dialog.show(getSupportFragmentManager(), "date");
+	}
+
+	@Override
+	public void onDeleteEntriesConfirmListener(String dateAsString) {
+		SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM, yyyy",
+				Locale.getDefault());
+		try {
+			Date date = formatter.parse(dateAsString);
+			Toast.makeText(this, date.toString(), Toast.LENGTH_LONG).show();
+			Log.d("date", date.toString());
+			db.deleteEntriesOlderThanDate(date);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 	}
 }

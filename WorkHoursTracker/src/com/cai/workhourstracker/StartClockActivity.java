@@ -59,15 +59,13 @@ public class StartClockActivity extends FragmentActivity implements
 		jobName = (TextView) findViewById(R.id.job_name_main_stop_clock);
 		jobPrice = (TextView) findViewById(R.id.start_clock_job_price);
 		db = new DatabaseHelper(getApplicationContext());
-		
-		
-		entries = db.getAllEntries();
 
 		Bundle extras = getIntent().getExtras();
 		String id_string = extras.get("id").toString();
 
 		jobId = Integer.valueOf(id_string);
 		Job job = db.getJobById(jobId);
+		entries = db.getAllEntriesByJobId(jobId);
 		db.closeDB();
 
 		jobName.setText(job.getName());
@@ -85,12 +83,12 @@ public class StartClockActivity extends FragmentActivity implements
 		entriesList.addHeaderView(header, null, false);
 		entriesList.setHeaderDividersEnabled(true);
 
-		// entriesList.setOnItemClickListener(this);
+		entriesList.setOnItemClickListener(this);
 		Entry[] entries_as_string_array = new Entry[entries.size()];
 
 		StopClockAdapter adapter = new StopClockAdapter(this,
 				entries.toArray(entries_as_string_array));
-	//	entriesList.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
+		// entriesList.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
 		entriesList.setOnItemLongClickListener(new OnItemLongClickListener() {
 
 			@Override
@@ -203,7 +201,7 @@ public class StartClockActivity extends FragmentActivity implements
 					entriesList.setChoiceMode(ListView.CHOICE_MODE_NONE);
 				}
 			});
-			
+
 			mode = null;
 		}
 
@@ -259,20 +257,17 @@ class StopClockAdapter extends ArrayAdapter<Entry> {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-
 		View row = convertView;
-
 		StopClockViewHolder holder = null;
+		
 		if (row == null) {
 			LayoutInflater inflater = (LayoutInflater) context
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			row = inflater.inflate(R.layout.stop_clock_list_row, parent, false);
 			holder = new StopClockViewHolder(row);
 			row.setTag(holder);
-			Log.d("test", "dasfasd dfasf");
 		} else {
 			holder = (StopClockViewHolder) row.getTag();
-			Log.d("test1", "dasfasd dfasf1111111111");
 		}
 
 		/*
@@ -287,5 +282,4 @@ class StopClockAdapter extends ArrayAdapter<Entry> {
 
 		return row;
 	}
-
 }
