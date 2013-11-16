@@ -9,6 +9,7 @@ import java.util.List;
 import com.cai.workhourstracker.JobsFragment.SectionComposerAdapter;
 import com.cai.workhourstracker.helper.DatabaseHelper;
 import com.cai.workhourstracker.helper.StopClockViewHolder;
+import com.cai.workhourstracker.helper.Utils;
 import com.cai.workhourstracker.model.Entry;
 import com.cai.workhourstracker.model.Job;
 
@@ -48,6 +49,8 @@ public class StartClockActivity extends FragmentActivity implements
 	private TextView jobPrice;
 	private int jobId;
 	private ActionMode mActionMode;
+	private TextView workHoursTextView;
+	private TextView moneyEarnedTextView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -62,16 +65,17 @@ public class StartClockActivity extends FragmentActivity implements
 
 		Bundle extras = getIntent().getExtras();
 		String id_string = extras.get("id").toString();
-
 		jobId = Integer.valueOf(id_string);
 		Job job = db.getJobById(jobId);
+
 		entries = db.getAllEntriesByJobId(jobId);
 		db.closeDB();
-
 		jobName.setText(job.getName());
+
 		Integer moneyPerHour = job.getHourPrice();
 		BigDecimal money = (new BigDecimal(moneyPerHour))
 				.divide(new BigDecimal(100));
+
 		jobPrice.setText("$" + new DecimalFormat("#0.##").format(money)
 				+ "/hour");
 		entriesList = (ListView) findViewById(R.id.entries_start_clock);
@@ -80,23 +84,29 @@ public class StartClockActivity extends FragmentActivity implements
 		ViewGroup header = (ViewGroup) inflater.inflate(
 				R.layout.start_clock_list_header, entriesList, false);
 
+		workHoursTextView = (TextView) header
+				.findViewById(R.id.start_clock_header_work_hours);
+		moneyEarnedTextView = (TextView) header
+				.findViewById(R.id.start_clock_header_money_earned);
+
+		int moneyEarned = Utils.moneyEarnedEntries(entries);
+		int workHours = Utils.workHoursForEntries(entries);
+
+		workHoursTextView.setText(String.valueOf(workHours) + "h");
+		moneyEarnedTextView.setText(Utils.convertMoneyToString(moneyEarned));
+
 		entriesList.addHeaderView(header, null, false);
 		entriesList.setHeaderDividersEnabled(true);
-
 		entriesList.setOnItemClickListener(this);
+
 		Entry[] entries_as_string_array = new Entry[entries.size()];
+		StopClockAdapter adapter = new StopClockAdapter(this, entries.toArray(entries_as_string_array));
 
-		StopClockAdapter adapter = new StopClockAdapter(this,
-				entries.toArray(entries_as_string_array));
-		// entriesList.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
 		entriesList.setOnItemLongClickListener(new OnItemLongClickListener() {
-
 			@Override
 			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
 					int position, long id) {
-
-				mActionMode = StartClockActivity.this
-						.startActionMode(modeCallBack);
+				mActionMode = StartClockActivity.this.startActionMode(modeCallBack);
 				entriesList.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
 				entriesList.setItemChecked(position, true);
 
@@ -107,18 +117,12 @@ public class StartClockActivity extends FragmentActivity implements
 		entriesList.setAdapter(adapter);
 	}
 
-	/**
-	 * Set up the {@link android.app.ActionBar}.
-	 */
 	private void setupActionBar() {
-
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.start_clock, menu);
 		return true;
 	}
@@ -153,8 +157,6 @@ public class StartClockActivity extends FragmentActivity implements
 		super.onSaveInstanceState(savedInstanceState);
 		Log.d("test11", "on save instance called");
 		savedInstanceState.putInt("id", jobId);
-
-		// etc.
 	}
 
 	@Override
@@ -259,7 +261,7 @@ class StopClockAdapter extends ArrayAdapter<Entry> {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View row = convertView;
 		StopClockViewHolder holder = null;
-		
+
 		if (row == null) {
 			LayoutInflater inflater = (LayoutInflater) context
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -270,15 +272,22 @@ class StopClockAdapter extends ArrayAdapter<Entry> {
 			holder = (StopClockViewHolder) row.getTag();
 		}
 
-		/*
-		 * ImageView myImage = (ImageView) row.findViewById(R.id.imageView1);
-		 * TextView title = (TextView) row.findViewById(R.id.textView1);
-		 * TextView description = (TextView) row.findViewById(R.id.textView2);
-		 */
-		// Date startClock = entries[position].getStartClock();
+		String monthDateYearDate 
+			= Utils.dateToMonthDateYearFormat(entries[position].getStartClock());
+		String dayOfWeek = Utils.dateToDayOfWeek(entries[position].getStartClock());
+		String startHour = Utils.dateToHour(entries[position].getStartClock());
+		String stopHour = Utils.dateToHour(entries[position].getStopClock());
+		
 		holder.getComment().setText(entries[position].getComment());
-		holder.getFullDate().setText(entries[position].getStartClock());
+		holder.getFullDate().setText(monthDateYearDate);
+		holder.getDayOfWeek().setText(dayOfWeek);
+		holder.getStartHour().setText(startHour);
+		holder.getStopHours().setText(stopHour);
 		holder.getId().setText(String.valueOf(entries[position].getId()));
+		holder.getMoneyEarned().
+			setText(Utils.convertMoneyToString(entries[position].getEarned_money()));
+		holder.getWorkHours().
+			setText(String.valueOf(Utils.differenceBetweenStartAndStop(entries[position])) + "h");
 
 		return row;
 	}
