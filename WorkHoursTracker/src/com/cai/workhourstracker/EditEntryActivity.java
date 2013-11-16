@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 
 import com.cai.workhourstracker.helper.DatabaseHelper;
+import com.cai.workhourstracker.helper.Utils;
 import com.cai.workhourstracker.model.Entry;
 import com.cai.workhourstracker.model.Job;
 
@@ -93,8 +94,9 @@ public class EditEntryActivity extends FragmentActivity implements
 		comment = (EditText) findViewById(R.id.edit_entry_comment);
 		tags = (Spinner) findViewById(R.id.edit_entry_tags);
 		baseRate = (EditText) findViewById(R.id.edit_entry_base_rate);
-
-		baseRate.setText(String.valueOf(entry.getBaseRate()));
+		
+		Utils.convertMoneyToString(entry.getBaseRate());
+		baseRate.setText(Utils.convertMoneyToString(entry.getBaseRate()) + "/hour");
 
 		setSpinnerSingleValue(tags, "None");
 
@@ -162,17 +164,19 @@ public class EditEntryActivity extends FragmentActivity implements
 				// TODO Auto-generated method stub
 
 				LinearLayout layout = (LinearLayout) findViewById(R.id.base_rate_buttons);
+				
 				LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				View view = inflater.inflate(
 						R.layout.edit_entry_regulate_buttons, null);
 				if (hasFocus) {
+					baseRate.setText(String.valueOf(entry.getBaseRate()));
 					layout.addView(view);
 				} else {
+					String baseRateViewText = baseRate.getText().toString();
+					baseRate.setText("$" + baseRateViewText + "/hour");
 					layout.removeViewAt(0);
 				}
-
 			}
-
 		});
 
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -191,8 +195,14 @@ public class EditEntryActivity extends FragmentActivity implements
 		customActionBarView.findViewById(R.id.actionbar_done)
 				.setOnClickListener(new View.OnClickListener() {
 					@Override
-					public void onClick(View v) {
-						entry.setComment(comment.getText().toString());
+					public void onClick(View v) {						
+						String jobName = (String) jobsSpinner.getSelectedItem();
+						Job foundJob = db.getJobByName(jobName);
+						String newBaseRate = baseRate.getText().toString();
+						entry.setBaseRate(Utils.stringToIntegerBaseRate(newBaseRate));						
+						entry.setComment(comment.getText().toString());						
+						entry.setJobId(foundJob.getId());			
+						
 						db.updateEntry(entry);
 						db.close();
 						finish();
@@ -208,9 +218,9 @@ public class EditEntryActivity extends FragmentActivity implements
 		actionBar.setCustomView(customActionBarView);
 		// END_INCLUDE (inflate_set_custom_view)
 	}
-
+	
 	private List<String> getJobsNames(List<Job> jobs) {
-		List<String> jobNamesList = new ArrayList();
+		List<String> jobNamesList = new ArrayList<String>();
 		for (int i = 0; i < jobs.size(); i++) {
 			jobNamesList.add(jobs.get(i).getName());
 		}
@@ -240,13 +250,11 @@ public class EditEntryActivity extends FragmentActivity implements
 	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
 			long arg3) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onNothingSelected(AdapterView<?> arg0) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -332,6 +340,12 @@ public class EditEntryActivity extends FragmentActivity implements
 		intent.putExtra("startClock", entry.getStartClock());
 		intent.putExtra("stopClock", entry.getStopClock());
 		intent.putExtra("comment", entry.getComment());
+		intent.putExtra("baseRate", entry.getBaseRate());
+		
+		String jobName = (String) jobsSpinner.getSelectedItem();
+		Toast.makeText(this, jobName, Toast.LENGTH_SHORT).show();
+		
+		intent.putExtra("jobName", jobName);
 
 		setResult(RESULT_OK, intent);
 		super.finish();
@@ -346,14 +360,19 @@ public class EditEntryActivity extends FragmentActivity implements
 	public void onUnpaidRate(View view) {
 		baseRate.setText("0");
 	}
+	
+	public void onPointAndHalfRate(View view){	
+		String baseRateString = String.valueOf(job.getHourPrice() * 1.5);
+		baseRate.setText(baseRateString);
+	}
 
 	public void onTwiceRate(View view) {
-		String baseRateString = String.valueOf(100 * 2);
+		String baseRateString = String.valueOf(job.getHourPrice() * 2);
 		baseRate.setText(baseRateString);
 	}
 
 	public void onJobRate(View view) {
-		String baseRateString = String.valueOf(100);
+		String baseRateString = String.valueOf(job.getHourPrice());
 		baseRate.setText(baseRateString);
 	}
 }
