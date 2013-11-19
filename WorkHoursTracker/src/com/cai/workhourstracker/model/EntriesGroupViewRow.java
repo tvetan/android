@@ -5,22 +5,22 @@ import java.util.List;
 import com.cai.workhourstracker.helper.Utils;
 
 public class EntriesGroupViewRow {
-	private String jobName;
+	private String groupCriteria;
 	private Integer moneyEarned;
 	private List<Entry> entries;
 	private Integer workHours;
 
-	public EntriesGroupViewRow(String jobName, Integer moneyEarned,
+	public EntriesGroupViewRow(String groupCriteria, Integer moneyEarned,
 			List<Entry> entries, Integer workHours) {
 		super();
-		this.jobName = jobName;
+		this.groupCriteria = groupCriteria;
 		this.moneyEarned = moneyEarned;
 		this.entries = entries;
 		this.workHours = workHours;
 	}
 
-	public EntriesGroupViewRow(String jobName, List<Entry> entries) {
-		this.jobName = jobName;
+	public EntriesGroupViewRow(String groupCriteria, List<Entry> entries) {
+		this.groupCriteria = groupCriteria;
 		this.entries = entries;
 		this.workHours = getWorkHours(entries);
 		this.moneyEarned = getMoneyEarned(entries);
@@ -45,12 +45,12 @@ public class EntriesGroupViewRow {
 		return sum;
 	}
 
-	public String getJobName() {
-		return jobName;
+	public String getGroupCriteria() {
+		return groupCriteria;
 	}
 
-	public void setJobName(String jobName) {
-		this.jobName = jobName;
+	public void setGroupCritera(String groupCriteria) {
+		this.groupCriteria = groupCriteria;
 	}
 
 	public Integer getMoneyEarned() {

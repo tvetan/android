@@ -37,11 +37,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
 
 public class EditEntryActivity extends FragmentActivity implements
-		AdapterView.OnItemSelectedListener,
-		TimerPickerFragmentWithCancel.ChangeStartTimeListener,
+		AdapterView.OnItemSelectedListener, TimerPickerFragmentWithCancel.ChangeStartTimeListener,
 		TimerPickerEndTimeFragmentWithCancel.ChangeEndTimeListener,
-		DurationPickerFragment.ChangeDurationListener,
-		TagsAddDialogFragment.TagsChangeListener {
+		DurationPickerFragment.ChangeDurationListener, TagsAddDialogFragment.TagsChangeListener {
 
 	private Spinner jobsSpinner;
 	private DatabaseHelper db;
@@ -94,12 +92,11 @@ public class EditEntryActivity extends FragmentActivity implements
 		comment = (EditText) findViewById(R.id.edit_entry_comment);
 		tags = (Spinner) findViewById(R.id.edit_entry_tags);
 		baseRate = (EditText) findViewById(R.id.edit_entry_base_rate);
-		
+
 		Utils.convertMoneyToString(entry.getBaseRate());
 		baseRate.setText(Utils.convertMoneyToString(entry.getBaseRate()) + "/hour");
 
 		setSpinnerSingleValue(tags, "None");
-
 		setSpinnerSingleValue(startTime, entry.getStartClock());
 
 		endTime = (Spinner) findViewById(R.id.edit_entry_end_clock);
@@ -143,14 +140,8 @@ public class EditEntryActivity extends FragmentActivity implements
 		tags.setOnTouchListener(new View.OnTouchListener() {
 			public boolean onTouch(View v, MotionEvent event) {
 				if (event.getAction() == MotionEvent.ACTION_UP) {
-
-					TagsAddDialogFragment newFragment = TagsAddDialogFragment
-							.newInstance();
+					TagsAddDialogFragment newFragment = TagsAddDialogFragment.newInstance();
 					newFragment.show(getSupportFragmentManager(), "dialog");
-
-					// TagsAddDialogFragment dialog = new
-					// TagsAddDialogFragment();
-					// dialog.show(getSupportFragmentManager(), "pick tags");
 				}
 				return true;
 			}
@@ -161,13 +152,9 @@ public class EditEntryActivity extends FragmentActivity implements
 
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
-				// TODO Auto-generated method stub
-
 				LinearLayout layout = (LinearLayout) findViewById(R.id.base_rate_buttons);
-				
 				LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				View view = inflater.inflate(
-						R.layout.edit_entry_regulate_buttons, null);
+				View view = inflater.inflate(R.layout.edit_entry_regulate_buttons, null);
 				if (hasFocus) {
 					baseRate.setText(String.valueOf(entry.getBaseRate()));
 					layout.addView(view);
@@ -175,6 +162,7 @@ public class EditEntryActivity extends FragmentActivity implements
 					String baseRateViewText = baseRate.getText().toString();
 					baseRate.setText("$" + baseRateViewText + "/hour");
 					layout.removeViewAt(0);
+					//layout.removeView(view);
 				}
 			}
 		});
@@ -190,19 +178,19 @@ public class EditEntryActivity extends FragmentActivity implements
 	private void addCustomActionBar() {
 		LayoutInflater inflater = (LayoutInflater) this
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		final View customActionBarView = inflater.inflate(
-				R.layout.actionbar_custom_view_done, null);
-		customActionBarView.findViewById(R.id.actionbar_done)
-				.setOnClickListener(new View.OnClickListener() {
+		final View customActionBarView = inflater
+				.inflate(R.layout.actionbar_custom_view_done, null);
+		customActionBarView.findViewById(R.id.actionbar_done).setOnClickListener(
+				new View.OnClickListener() {
 					@Override
-					public void onClick(View v) {						
+					public void onClick(View v) {
 						String jobName = (String) jobsSpinner.getSelectedItem();
 						Job foundJob = db.getJobByName(jobName);
 						String newBaseRate = baseRate.getText().toString();
-						entry.setBaseRate(Utils.stringToIntegerBaseRate(newBaseRate));						
-						entry.setComment(comment.getText().toString());						
-						entry.setJobId(foundJob.getId());			
-						
+						entry.setBaseRate(Utils.stringToIntegerBaseRate(newBaseRate));
+						entry.setComment(comment.getText().toString());
+						entry.setJobId(foundJob.getId());
+
 						db.updateEntry(entry);
 						db.close();
 						finish();
@@ -212,13 +200,12 @@ public class EditEntryActivity extends FragmentActivity implements
 		// Show the custom action bar view and hide the normal Home icon and
 		// title.
 		final ActionBar actionBar = getActionBar();
-		actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM,
-				ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_SHOW_HOME
-						| ActionBar.DISPLAY_SHOW_TITLE);
+		actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM, ActionBar.DISPLAY_SHOW_CUSTOM
+				| ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
 		actionBar.setCustomView(customActionBarView);
 		// END_INCLUDE (inflate_set_custom_view)
 	}
-	
+
 	private List<String> getJobsNames(List<Job> jobs) {
 		List<String> jobNamesList = new ArrayList<String>();
 		for (int i = 0; i < jobs.size(); i++) {
@@ -247,8 +234,7 @@ public class EditEntryActivity extends FragmentActivity implements
 	}
 
 	@Override
-	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
-			long arg3) {
+	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 		// TODO Auto-generated method stub
 	}
 
@@ -269,7 +255,6 @@ public class EditEntryActivity extends FragmentActivity implements
 
 		startTime.setOnItemSelectedListener(this);
 		startTime.setAdapter(adapter);
-
 	}
 
 	@Override
@@ -303,8 +288,8 @@ public class EditEntryActivity extends FragmentActivity implements
 
 		String startTimeString = startTime.getSelectedItem().toString();
 
-		SimpleDateFormat dateFormat = new SimpleDateFormat(
-				"yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale
+				.getDefault());
 		try {
 			Date date = dateFormat.parse(startTimeString);
 			Calendar calendar = Calendar.getInstance();
@@ -319,8 +304,7 @@ public class EditEntryActivity extends FragmentActivity implements
 
 			ArrayAdapter<String> timeAdapter = new ArrayAdapter<String>(this,
 					android.R.layout.simple_spinner_item, time);
-			timeAdapter
-					.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
+			timeAdapter.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
 			endTime.setOnItemSelectedListener(this);
 			endTime.setAdapter(timeAdapter);
 
@@ -341,10 +325,10 @@ public class EditEntryActivity extends FragmentActivity implements
 		intent.putExtra("stopClock", entry.getStopClock());
 		intent.putExtra("comment", entry.getComment());
 		intent.putExtra("baseRate", entry.getBaseRate());
-		
+
 		String jobName = (String) jobsSpinner.getSelectedItem();
 		Toast.makeText(this, jobName, Toast.LENGTH_SHORT).show();
-		
+
 		intent.putExtra("jobName", jobName);
 
 		setResult(RESULT_OK, intent);
@@ -360,8 +344,8 @@ public class EditEntryActivity extends FragmentActivity implements
 	public void onUnpaidRate(View view) {
 		baseRate.setText("0");
 	}
-	
-	public void onPointAndHalfRate(View view){	
+
+	public void onPointAndHalfRate(View view) {
 		String baseRateString = String.valueOf(job.getHourPrice() * 1.5);
 		baseRate.setText(baseRateString);
 	}

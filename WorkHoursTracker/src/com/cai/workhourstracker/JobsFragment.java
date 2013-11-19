@@ -1,20 +1,15 @@
 package com.cai.workhourstracker;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
 import com.cai.workhourstracker.Views.GroupListView;
 import com.cai.workhourstracker.adapters.GroupViewAdapter;
 import com.cai.workhourstracker.helper.DatabaseHelper;
-import com.cai.workhourstracker.model.Composer;
 import com.cai.workhourstracker.model.Job;
 import com.cai.workhourstracker.model.JobNameComparator;
 import com.cai.workhourstracker.model.JobNameReverseComparator;
-
 import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,32 +24,30 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-public class JobsFragment extends Fragment implements
-		AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener {
+public class JobsFragment extends Fragment implements AdapterView.OnItemClickListener,
+		AdapterView.OnItemSelectedListener {
 
-	ActionMode mActionMode;
+	private ActionMode mActionMode;
 	private int counterChecked = 0;
-	GroupListView listView;
-	SectionComposerAdapter adapter;
-	DatabaseHelper db;
-	List<Job> onTheClock;
-	List<Job> ofTheClock;
-	List<Pair<String, List<Job>>> all;
-	// String[] headers = new String[] { "On the clock", "Of the clock" };
-	List<String> headers = new ArrayList<String>(Arrays.asList("On the clock",
+	private GroupListView listView;
+	private SectionComposerAdapter adapter;
+	private DatabaseHelper db;
+	private List<Job> onTheClock;
+	private List<Job> ofTheClock;
+	private List<Pair<String, List<Job>>> all;
+	private List<String> headers = new ArrayList<String>(Arrays.asList("On the clock",
 			"Of the clock"));
-	private boolean initializedView = false;
 	private static final int REQUEST_CODE = 10;
+	private int spinnerSelectedPosition = 0;
 
+	
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -62,44 +55,43 @@ public class JobsFragment extends Fragment implements
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-
-		View rootView = inflater.inflate(R.layout.fragment_jobs, container,
-				false);
-
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View rootView = inflater.inflate(R.layout.fragment_jobs, container, false);
+		Log.d("onCreateView job", "onCreateView job");
+		
+		
+		
 		return rootView;
 	}
+	
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-
+		Log.d("tag", "onActivityCreated job");
 		listView = (GroupListView) getActivity().findViewById(R.id.lsComposer);
-		listView.setPinnedHeaderView(LayoutInflater.from(getActivity())
-				.inflate(R.layout.item_composer_header, listView, false));
+		listView.setPinnedHeaderView(LayoutInflater.from(getActivity()).inflate(
+				R.layout.item_composer_header, listView, false));
 		listView.setOnItemClickListener(this);
 		db = new DatabaseHelper(getActivity());
 
-		List<Job> jobs = db.getAllJobs();
-
-		Toast.makeText(getActivity(), Integer.toString(jobs.size()),
-				Toast.LENGTH_LONG).show();
+		
+		if (savedInstanceState != null) {
+			spinnerSelectedPosition = savedInstanceState.getInt("spinnerSelectedPosition");
+		}
+		
+		
+		
 		all = new ArrayList<Pair<String, List<Job>>>();
-
-		// String[] headers = new String[] { "On the clock", "Of the clock" };
-
 		onTheClock = db.getOnClockJobs();
 		ofTheClock = db.getOffClockJobs();
-
 		all.add(new Pair<String, List<Job>>(headers.get(0), onTheClock));
 		all.add(new Pair<String, List<Job>>(headers.get(1), ofTheClock));
 
 		listView.setOnItemLongClickListener(new OnItemLongClickListener() {
 
 			@Override
-			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-					int position, long id) {
+			public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int position, long id) {
 				if (mActionMode != null) {
 					return false;
 				}
@@ -114,62 +106,80 @@ public class JobsFragment extends Fragment implements
 			}
 		});
 
-		listView.setAdapter(adapter = new SectionComposerAdapter(headers, all));
+		setListViewAdapter();
 
 	}
+	
+	private void setListViewAdapter(){
+		if (spinnerSelectedPosition == 0) {
+			listView.setAdapter(adapter = new SectionComposerAdapter(headers, all));
+		}else{
+			for (int i = 0; i < all.size(); i++) {
+				Collections.sort(all.get(i).second, new JobNameReverseComparator());
+			}
+
+			listView.setAdapter(adapter = new SectionComposerAdapter(headers, all));
+		}	
+	}
+	
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// handle item selection
 		switch (item.getItemId()) {
 		case R.id.add_job:
-			// Intent intent = new Intent(getActivity(), AddJobActivity.class);
-
+			Intent intent = new Intent(getActivity(), AddJobActivity.class);
+			startActivityForResult(intent, REQUEST_CODE);
+			return true;
+		case R.id.action_select_all:
 			mActionMode = getActivity().startActionMode(modeCallBack);
 			listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-
 			counterChecked = listView.getAdapter().getCount();
 
 			setNewTitle();
 			listView.post(new Runnable() {
 				@Override
 				public void run() {
-					// TODO Auto-generated method stub
 					for (int i = 0; i < listView.getAdapter().getCount(); i++) {
 						listView.setItemChecked(i, true);
 					}
 				}
 			});
-
-			// startActivityForResult(intent, REQUEST_CODE);
-			// Toast.makeText(getActivity(), "sdaf", Toast.LENGTH_SHORT).show();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
 	}
+	@Override
+	public void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		Log.d("on pause job", "pause");
+	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		// TODO Auto-generated method stub
+		super.onSaveInstanceState(outState);
+		
+		outState.putInt("spinnerSelectedPosition", spinnerSelectedPosition);
+		Log.d("on SaveInstanceState job", "SaveInstanceState");
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		Log.d("on destroy job", "destroy");
+		db.closeDB();
+	}
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == MainActivity.RESULT_OK && requestCode == REQUEST_CODE) {
-			if (data.hasExtra("jobName") && data.hasExtra("jobPrice")) {
-				String jobNameString = data.getExtras().getString("jobName");
-				String jobPriceString = data.getExtras().getString("jobPrice");
-
-				if (jobNameString != null && jobPriceString != null
-						&& jobNameString.length() > 0) {
-
-					BigDecimal money = (new BigDecimal(jobPriceString))
-							.multiply(new BigDecimal(1000));
-
-					int money_int = money.intValueExact();
-
-					Job job = new Job(jobNameString, false, money_int);
-					db.createJob(job, null);
-					ofTheClock.add(job);
-					listView.setAdapter(adapter = new SectionComposerAdapter(
-							headers, all));
-				}
+			if (data.hasExtra("createdJobId")) {
+				int createdJobId = data.getExtras().getInt("createdJobId");
+				Job createdJob = db.getJobById(createdJobId);
+				ofTheClock.add(createdJob);
+				listView.setAdapter(adapter = new SectionComposerAdapter(headers, all));
 			}
 		}
 	}
@@ -177,36 +187,31 @@ public class JobsFragment extends Fragment implements
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
+		Log.d("tag", "tag");
 		ActionBar actionBar = getActivity().getActionBar();
 		actionBar.setCustomView(R.layout.jobs_filter);
-		actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM
-				| ActionBar.DISPLAY_SHOW_HOME);
+		actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_SHOW_HOME);
 
-		Spinner spinner = (Spinner) getActivity().findViewById(
-				R.id.jobs_filter_spinner);
-		// Create an ArrayAdapter using the string array and a default spinner
-		// layout
-		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-				getActivity(), R.array.jobs_spinner_array,
-				android.R.layout.simple_spinner_item);
-		// Specify the layout to use when the list of choices appears
+		Spinner spinner = (Spinner) getActivity().findViewById(R.id.jobs_filter_spinner);
+		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
+				R.array.jobs_spinner_array, android.R.layout.simple_spinner_item);
+
+		
+		
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
 		spinner.setOnItemSelectedListener(this);
-
-		// Apply the adapter to the spinner
 		spinner.setAdapter(adapter);
-
+		spinner.setSelection(spinnerSelectedPosition);
 		inflater.inflate(R.menu.fragment_jobs_menu, menu);
+
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 
-	public class SectionComposerAdapter extends GroupViewAdapter {
-		List<Pair<String, List<Job>>> all;
-		List<String> sectionHeaders;
+	private class SectionComposerAdapter extends GroupViewAdapter {
+		private List<Pair<String, List<Job>>> all;
+		private List<String> sectionHeaders;
 
-		public SectionComposerAdapter(List<String> sectionHeaders,
-				List<Pair<String, List<Job>>> all) {
+		public SectionComposerAdapter(List<String> sectionHeaders, List<Pair<String, List<Job>>> all) {
 			this.sectionHeaders = sectionHeaders;
 			this.all = all;
 		}
@@ -217,7 +222,7 @@ public class JobsFragment extends Fragment implements
 			for (int i = 0; i < all.size(); i++) {
 				res += all.get(i).second.size();
 			}
-			
+
 			return res;
 		}
 
@@ -243,31 +248,26 @@ public class JobsFragment extends Fragment implements
 		}
 
 		@Override
-		protected void bindSectionHeader(View view, int position,
-				boolean displaySectionHeader) {
+		protected void bindSectionHeader(View view, int position, boolean displaySectionHeader) {
 			if (displaySectionHeader) {
 				view.findViewById(R.id.header).setVisibility(View.VISIBLE);
-				TextView lSectionTitle = (TextView) view
-						.findViewById(R.id.header);
-				lSectionTitle
-						.setText(getSections()[getSectionForPosition(position)]);
+				TextView lSectionTitle = (TextView) view.findViewById(R.id.header);
+				lSectionTitle.setText(getSections()[getSectionForPosition(position)]);
 			} else {
 				view.findViewById(R.id.header).setVisibility(View.GONE);
 			}
 		}
 
 		@Override
-		public View getAmazingView(int position, View convertView,
-				ViewGroup parent) {
+		public View getAmazingView(int position, View convertView, ViewGroup parent) {
 			View res = convertView;
 			if (res == null)
-				res = getActivity().getLayoutInflater().inflate(
-						R.layout.item_composer, null);
+				res = getActivity().getLayoutInflater().inflate(R.layout.item_composer, null);
 
 			TextView jobName = (TextView) res.findViewById(R.id.jobName);
 			TextView jobId = (TextView) res.findViewById(R.id.jobId);
 			Job job = getItem(position);
-			
+
 			jobName.setText(job.getName());
 			jobId.setText(String.valueOf(job.getId()));
 
@@ -277,8 +277,7 @@ public class JobsFragment extends Fragment implements
 		@Override
 		public void configurePinnedHeader(View header, int position, int alpha) {
 			TextView lSectionHeader = (TextView) header;
-			lSectionHeader
-					.setText(getSections()[getSectionForPosition(position)]);
+			lSectionHeader.setText(getSections()[getSectionForPosition(position)]);
 			lSectionHeader.setBackgroundColor(alpha << 24 | (0xbbffbb));
 			lSectionHeader.setTextColor(alpha << 24 | (0x000000));
 		}
@@ -327,7 +326,6 @@ public class JobsFragment extends Fragment implements
 
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View view, int arg2, long arg3) {
-
 		if (mActionMode == null) {
 			Intent intent = new Intent(getActivity(), StartClockActivity.class);
 			TextView textView = (TextView) view.findViewById(R.id.jobId);
@@ -351,27 +349,26 @@ public class JobsFragment extends Fragment implements
 	}
 
 	@Override
-	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
-			long arg3) {
+	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 		if (arg2 == 0) {
+			spinnerSelectedPosition = 0;
 			for (int i = 0; i < all.size(); i++) {
 				Collections.sort(all.get(i).second, new JobNameComparator());
 			}
-			
+
 			listView.setAdapter(adapter = new SectionComposerAdapter(headers, all));
 		} else if (arg2 == 1) {
-
+			spinnerSelectedPosition = 1;
 			for (int i = 0; i < all.size(); i++) {
 				Collections.sort(all.get(i).second, new JobNameReverseComparator());
 			}
-			
+
 			listView.setAdapter(adapter = new SectionComposerAdapter(headers, all));
 		}
 	}
 
 	@Override
 	public void onNothingSelected(AdapterView<?> arg0) {
-		// TODO Auto-generated method stub
 	}
 
 	private ActionMode.Callback modeCallBack = new ActionMode.Callback() {

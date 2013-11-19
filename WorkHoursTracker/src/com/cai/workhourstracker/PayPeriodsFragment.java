@@ -7,25 +7,20 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-
-import com.cai.workhourstracker.EntriesFragment.SectionComposerAdapter;
 import com.cai.workhourstracker.Views.GroupListView;
 import com.cai.workhourstracker.adapters.GroupViewAdapter;
 import com.cai.workhourstracker.helper.DatabaseHelper;
+import com.cai.workhourstracker.helper.MoneyFormatUtils;
 import com.cai.workhourstracker.helper.Utils;
 import com.cai.workhourstracker.model.EntriesGroupViewRow;
 import com.cai.workhourstracker.model.Entry;
 import com.cai.workhourstracker.model.PayPeriod;
-
-import android.app.ActionBar;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -53,6 +48,13 @@ public class PayPeriodsFragment extends Fragment implements AdapterView.OnItemCl
 	}
 
 	@Override
+	public void onDetach() {
+		// TODO Auto-generated method stub
+		super.onDetach();
+		db.closeDB();
+	}
+
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_pay_periods, container, false);
 
@@ -70,14 +72,43 @@ public class PayPeriodsFragment extends Fragment implements AdapterView.OnItemCl
 
 		db = new DatabaseHelper(getActivity());
 		payPeriods = db.getAllPayPeriods();
-		db.close();
+
+		LayoutInflater inflater = (LayoutInflater) getActivity().getBaseContext().getSystemService(
+				Context.LAYOUT_INFLATER_SERVICE);
+		View header = inflater.inflate(R.layout.start_clock_list_header, null);
+		fillHeaderData(header, payPeriods);
+		listView.addHeaderView(header);
 
 		all = groupByDate();
-
 		listView.setAdapter(adapter = new SectionComposerAdapter(Utils.getHeaders(all), Utils
 				.groupEachPayPeriodGroupByJob(all, getActivity())));
-		// List<String> list = new ArrayList<String>(all.keySet());
-		// listView.setAdapter(adapter = new SectionComposerAdapter(list, all));
+	}
+
+	private void fillHeaderData(View header, List<PayPeriod> payPeriods) {
+		List<Entry> allEntries = getAllEntriesFromPayPeriodList(payPeriods);
+
+		int moneyEarned = Utils.moneyEarnedEntries(allEntries);
+		int workHours = Utils.workHoursForEntries(allEntries);
+
+		TextView workHoursTextView = (TextView) header
+				.findViewById(R.id.start_clock_header_work_hours);
+		TextView moneyEarnedTextView = (TextView) header
+				.findViewById(R.id.start_clock_header_money_earned);
+
+		workHoursTextView.setText(String.valueOf(workHours) + "h");
+		moneyEarnedTextView
+				.setText(MoneyFormatUtils.toLocaleCurrencyFormatFromInteger(moneyEarned));
+
+	}
+
+	private List<Entry> getAllEntriesFromPayPeriodList(List<PayPeriod> payPeriods) {
+		List<Entry> entries = new ArrayList<Entry>();
+		for (PayPeriod payPeriod : payPeriods) {
+			List<Entry> currentEntries = db.getAllEntriesByPayPeriodId(payPeriod.getId());
+			entries.addAll(currentEntries);
+		}
+
+		return entries;
 	}
 
 	@Override
@@ -132,8 +163,8 @@ public class PayPeriodsFragment extends Fragment implements AdapterView.OnItemCl
 	}
 
 	public String changeDateStringFormat(SimpleDateFormat format, String dateAsString) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
-				Locale.getDefault());
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale
+				.getDefault());
 		Date date;
 
 		try {
@@ -154,15 +185,6 @@ public class PayPeriodsFragment extends Fragment implements AdapterView.OnItemCl
 					.groupEachPayPeriodGroupByJob(all, getActivity())));
 		} else {
 			all = groupByJob();
-			// List<String> list = new ArrayList<String>(all.keySet());
-			// listView.setAdapter(adapter = new SectionComposerAdapter(list,
-			// all));
-			//
-			// Log.d("headers", Utils.getHeaders(all).toString());
-			// Log.d("first header",Utils.getHeaders(all).get(0));
-			// Log.d("content",
-			// Utils.groupEachPayPeriodGroupByJob(all, getActivity())
-			// .get(Utils.getHeaders(all).get(0)).get(0).getGroupCriteria());
 			listView.setAdapter(adapter = new SectionComposerAdapter(Utils.getHeaders(all), Utils
 					.groupEachPayPeriodGroupByDate(all, getActivity())));
 
@@ -173,10 +195,10 @@ public class PayPeriodsFragment extends Fragment implements AdapterView.OnItemCl
 	public void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
-	
+
 		db.closeDB();
 	}
-	
+
 	@Override
 	public void onNothingSelected(AdapterView<?> arg0) {
 		// TODO Auto-generated method stub
@@ -213,7 +235,6 @@ public class PayPeriodsFragment extends Fragment implements AdapterView.OnItemCl
 		@Override
 		public EntriesGroupViewRow getItem(int position) {
 			int c = 0;
-			Log.d("list list", payPariodsGroups.get(0).get(0).getGroupCriteria());
 			for (int i = 0; i < payPariodsGroups.size(); i++) {
 				if (position >= c && position < c + payPariodsGroups.get(i).size()) {
 					return payPariodsGroups.get(i).get(position - c);
@@ -331,8 +352,6 @@ public class PayPeriodsFragment extends Fragment implements AdapterView.OnItemCl
 
 		@Override
 		public String[] getSections() {
-			// Log.d("header down", all.get(sectionHeaders.toArray(new
-			// String[sectionHeaders.size()])[1]).get(0).getGroupCriteria());
 			return sectionHeaders.toArray(new String[sectionHeaders.size()]);
 		}
 

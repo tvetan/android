@@ -27,7 +27,6 @@ public class TimerPickerFragmentWithCancel extends DialogFragment {
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
 		LayoutInflater inflater = getActivity().getLayoutInflater();
 		final View textEntryView = inflater.inflate(
 				R.layout.time_picker_layout, null);

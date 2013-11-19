@@ -6,6 +6,7 @@ import com.cai.workhourstracker.adapters.GroupViewAdapter.HasMorePagesListener;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -76,47 +77,48 @@ public class GroupListView extends ListView implements HasMorePagesListener {
 		if (mHeaderView == null) {
 			return;
 		}
-
-		int state = adapter.getPinnedHeaderState(position);
-		switch (state) {
-		case GroupViewAdapter.PINNED_HEADER_GONE: {
-			mHeaderViewVisible = false;
-			break;
-		}
-
-		case GroupViewAdapter.PINNED_HEADER_VISIBLE: {
-			adapter.configurePinnedHeader(mHeaderView, position, 255);
-			if (mHeaderView.getTop() != 0) {
-				mHeaderView.layout(0, 0, mHeaderViewWidth, mHeaderViewHeight);
-			}
-			mHeaderViewVisible = true;
-			break;
-		}
-
-		case GroupViewAdapter.PINNED_HEADER_PUSHED_UP: {
-			View firstView = getChildAt(0);
-			if (firstView != null) {
-				int bottom = firstView.getBottom();
-				int headerHeight = mHeaderView.getHeight();
-				int y;
-				int alpha;
-				if (bottom < headerHeight) {
-					y = (bottom - headerHeight);
-					alpha = 255 * (headerHeight + y) / headerHeight;
-				} else {
-					y = 0;
-					alpha = 255;
-				}
-				adapter.configurePinnedHeader(mHeaderView, position, alpha);
-				if (mHeaderView.getTop() != y) {
-					mHeaderView.layout(0, y, mHeaderViewWidth,
-							mHeaderViewHeight + y);
-				}
-				mHeaderViewVisible = true;
-			}
-			break;
-		}
-		}
+		
+	//	if(adapter == null) return;
+	//	Integer state = adapter.getPinnedHeaderState(position);
+//		switch (state) {
+//		case GroupViewAdapter.PINNED_HEADER_GONE: {
+//			mHeaderViewVisible = false;
+//			break;
+//		}
+//
+//		case GroupViewAdapter.PINNED_HEADER_VISIBLE: {
+//			adapter.configurePinnedHeader(mHeaderView, position, 255);
+//			if (mHeaderView.getTop() != 0) {
+//				mHeaderView.layout(0, 0, mHeaderViewWidth, mHeaderViewHeight);
+//			}
+//			mHeaderViewVisible = true;
+//			break;
+//		}
+//
+//		case GroupViewAdapter.PINNED_HEADER_PUSHED_UP: {
+//			View firstView = getChildAt(0);
+//			if (firstView != null) {
+//				int bottom = firstView.getBottom();
+//				int headerHeight = mHeaderView.getHeight();
+//				int y;
+//				int alpha;
+//				if (bottom < headerHeight) {
+//					y = (bottom - headerHeight);
+//					alpha = 255 * (headerHeight + y) / headerHeight;
+//				} else {
+//					y = 0;
+//					alpha = 255;
+//				}
+//				adapter.configurePinnedHeader(mHeaderView, position, alpha);
+//				if (mHeaderView.getTop() != y) {
+//					mHeaderView.layout(0, y, mHeaderViewWidth,
+//							mHeaderViewHeight + y);
+//				}
+//				mHeaderViewVisible = true;
+//			}
+//			break;
+//		}
+//		}
 	}
 
 	@Override

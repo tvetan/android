@@ -42,7 +42,7 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/linearLayout1"
         android:divider="?android:attr/dividerVertical"
-        android:dividerPadding="2dp"
+        android:dividerPadding="6dp"
         android:orientation="horizontal"
         android:showDividers="middle" >
 
@@ -52,18 +52,19 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textAlignment="center"
-            android:paddingLeft="30dp" >
+            android:paddingLeft="30dp"
+            android:textAlignment="center" >
 
             <TextView
+                android:id="@+id/start_clock_button"
                 style="?android:actionBarTabTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:drawablePadding="8dp"
                 android:gravity="center_vertical"
                 android:paddingRight="20dp"
-                android:text="Clock In Now"
-                android:textColor="#ff0000" />
+                android:text="Start Clock"
+                />"
         </FrameLayout>
 
         <FrameLayout
@@ -72,52 +73,33 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textAlignment="center"
-            android:paddingLeft="20dp"  >
+            android:paddingLeft="20dp"
+            android:textAlignment="center" >
 
             <TextView
+                android:id="@+id/stop_clock_button"
                 style="?android:actionBarTabTextStyle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:drawablePadding="8dp"
                 android:gravity="center_vertical"
                 android:paddingRight="20dp"
-                android:text="Start Clock At..." />
+                android:text="Stop Clock" />
         </FrameLayout>
     </LinearLayout>
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/textlines"
-        android:padding="5dp" >
-
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:text="TextView" />
-
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="TextView" />
-
-        <TextView
-            android:id="@+id/textView5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:text="TextView" />
-    </FrameLayout>
+        android:orientation="horizontal"
+        android:id="@+id/work_progress_container" >
+    </LinearLayout>
 
     <ListView
         android:id="@+id/entries_start_clock"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/borders"
         android:drawSelectorOnTop="true"
         android:headerDividersEnabled="true" >
     </ListView>

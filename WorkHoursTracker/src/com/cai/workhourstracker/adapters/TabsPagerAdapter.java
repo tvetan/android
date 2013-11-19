@@ -7,8 +7,9 @@ import com.cai.workhourstracker.PayPeriodsFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
  
-public class TabsPagerAdapter extends FragmentPagerAdapter {
+public class TabsPagerAdapter extends FragmentStatePagerAdapter {
  
     public TabsPagerAdapter(FragmentManager fm) {
         super(fm);
@@ -37,5 +38,4 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
         // get item count - equal to number of tabs
         return 3;
     }
- 
 }

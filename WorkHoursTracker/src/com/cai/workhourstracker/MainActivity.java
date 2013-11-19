@@ -38,35 +38,35 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends FragmentActivity implements
-		ActionBar.TabListener, IDeleteEntriesListener, IDeleteEntriesConfirm {
+public class MainActivity extends FragmentActivity implements ActionBar.TabListener,
+		IDeleteEntriesListener, IDeleteEntriesConfirm {
 
 	private ViewPager viewPager;
 	private TabsPagerAdapter mAdapter;
 	private ActionBar actionBar;
 	private String[] tabs = { "JOBS", "ENTRIES", "PAY PERIODS" };
+	private DatabaseHelper db;
 
-	DatabaseHelper db;
-
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+	
+		db.closeDB();
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
-		// Initilization
 		viewPager = (ViewPager) findViewById(R.id.pager);
 		actionBar = getActionBar();
-
 		mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
-
 		viewPager.setAdapter(mAdapter);
 		// actionBar.setHomeButtonEnabled(false);
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-		// Adding Tabs
 		for (String tab_name : tabs) {
-			actionBar.addTab(actionBar.newTab().setText(tab_name)
-					.setTabListener(this));
+			actionBar.addTab(actionBar.newTab().setText(tab_name).setTabListener(this));
 		}
 		viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
@@ -86,42 +86,62 @@ public class MainActivity extends FragmentActivity implements
 
 		db = new DatabaseHelper(getApplicationContext());
 
-		// addJobs();
-		// addPayPeriods();
-		// addEntries();
-		db.closeDB();
+		//addJobs();
+		//addPayPeriods();
+		//addEntries();
 	}
 
 	private void addJobs() {
 		Tag tag1 = new Tag("Shopping");
 		long tag1_id = db.createTag(tag1);
 		Job job = new Job("Programmer", false, 123);
+		job.setDeduction(120);
+		job.setTaxPercentage(2000);
+		job.setTimePerDate(800);
 		db.createJob(job, new long[] { tag1_id });
 
 		job = new Job("Writer", false, 1123);
+		job.setDeduction(1120);
+		job.setTaxPercentage(3000);
+		job.setTimePerDate(400);
 		db.createJob(job, new long[] { tag1_id });
 
 		job = new Job("Tennis Player", true, 1123);
+		job.setDeduction(1125);
+		job.setTaxPercentage(2125);
+		job.setTimePerDate(755);
 		db.createJob(job, new long[] { tag1_id });
 
 		job = new Job("Worker", false, 1234);
+		job.setDeduction(120);
+		job.setTaxPercentage(2000);
+		job.setTimePerDate(800);
 		db.createJob(job, new long[] { tag1_id });
 
 		job = new Job("job", false, 12000);
+		job.setDeduction(120);
+		job.setTaxPercentage(2000);
+		job.setTimePerDate(800);
 		db.createJob(job, new long[] { tag1_id });
 
 		job = new Job("QA", false, 11111);
+		job.setDeduction(120);
+		job.setTaxPercentage(2000);
+		job.setTimePerDate(800);
 		db.createJob(job, new long[] { tag1_id });
 
 		job = new Job("Support", true, 9888);
+		job.setDeduction(2122);
+		job.setTaxPercentage(2500);
+		job.setTimePerDate(300);
 		db.createJob(job, new long[] { tag1_id });
 	}
 
 	private void addPayPeriods() {
 		List<Job> jobsList = db.getAllJobs();
 
-		SimpleDateFormat dateFormat = new SimpleDateFormat(
-				"yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
+				Locale.getDefault());
 		Calendar calendar = Calendar.getInstance();
 		String date = dateFormat.format(calendar.getTime());
 
@@ -156,14 +176,32 @@ public class MainActivity extends FragmentActivity implements
 		payPeriod.setMoney(11);
 		db.createPayPeriod(payPeriod);
 
+		calendar.clear();
+		calendar.add(Calendar.WEEK_OF_MONTH, 2);
+		date = dateFormat.format(calendar.getTime());
+		payPeriod = new PayPeriod();
+		payPeriod.setDate(date);
+		payPeriod.setJobId(jobsList.get(6).getId());
+		payPeriod.setMoney(1112222);
+		db.createPayPeriod(payPeriod);
+
+		calendar.clear();
+		calendar.add(Calendar.WEEK_OF_MONTH, 2);
+		date = dateFormat.format(calendar.getTime());
+		payPeriod = new PayPeriod();
+		payPeriod.setDate(date);
+		payPeriod.setJobId(jobsList.get(4).getId());
+		payPeriod.setMoney(11111);
+		db.createPayPeriod(payPeriod);
+
 	}
 
 	private void addEntries() {
 		List<Job> jobList = db.getAllJobs();
 		List<PayPeriod> payPeriodList = db.getAllPayPeriods();
 
-		SimpleDateFormat dateFormat = new SimpleDateFormat(
-				"yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
+				Locale.getDefault());
 		Calendar cal = Calendar.getInstance();
 
 		cal.add(Calendar.DATE, 1);
@@ -171,16 +209,15 @@ public class MainActivity extends FragmentActivity implements
 		cal.add(Calendar.DATE, 2);
 		String stopDate = dateFormat.format(cal.getTime());
 		Integer money = 356;
-		Entry entry = new Entry("some comment", creationDate, stopDate, jobList
-				.get(1).getId(), money, 33, 123);
+		Entry entry = new Entry("some comment", creationDate, stopDate, jobList.get(1).getId(),
+				money, 33, 123);
 		db.createEntry(entry);
 
 		cal.add(Calendar.DATE, 2);
 		creationDate = dateFormat.format(cal.getTime());
 		cal.add(Calendar.MONTH, 2);
 		stopDate = dateFormat.format(cal.getTime());
-		entry = new Entry("com", creationDate, stopDate,
-				jobList.get(1).getId(), money, 177, 453);
+		entry = new Entry("com", creationDate, stopDate, jobList.get(1).getId(), money, 177, 453);
 		entry.setBaseRate(7700);
 		db.createEntry(entry);
 
@@ -188,8 +225,8 @@ public class MainActivity extends FragmentActivity implements
 		creationDate = dateFormat.format(cal.getTime());
 		cal.add(Calendar.WEEK_OF_YEAR, 4);
 		stopDate = dateFormat.format(cal.getTime());
-		entry = new Entry("with pay period", creationDate, stopDate, jobList
-				.get(4).getId(), 444, 11, 123);
+		entry = new Entry("with pay period", creationDate, stopDate, jobList.get(4).getId(), 444,
+				11, 123);
 		entry.setPayPeriodId(payPeriodList.get(3).getId());
 		entry.setBaseRate(1234);
 		db.createEntry(entry);
@@ -198,8 +235,7 @@ public class MainActivity extends FragmentActivity implements
 		creationDate = dateFormat.format(cal.getTime());
 		cal.add(Calendar.WEEK_OF_YEAR, 2);
 		stopDate = dateFormat.format(cal.getTime());
-		entry = new Entry("without", creationDate, stopDate, jobList.get(4)
-				.getId(), 444, 11);
+		entry = new Entry("without", creationDate, stopDate, jobList.get(4).getId(), 444, 11);
 		entry.setBaseRate(1111);
 		entry.setPayPeriodId(payPeriodList.get(0).getId());
 		db.createEntry(entry);
@@ -208,8 +244,7 @@ public class MainActivity extends FragmentActivity implements
 		creationDate = dateFormat.format(cal.getTime());
 		cal.add(Calendar.WEEK_OF_YEAR, 2);
 		stopDate = dateFormat.format(cal.getTime());
-		entry = new Entry("1111", creationDate, stopDate, jobList.get(4)
-				.getId(), 444, 11);
+		entry = new Entry("1111", creationDate, stopDate, jobList.get(4).getId(), 444, 11);
 		entry.setBaseRate(11);
 		entry.setPayPeriodId(payPeriodList.get(2).getId());
 		db.createEntry(entry);
@@ -218,8 +253,7 @@ public class MainActivity extends FragmentActivity implements
 		creationDate = dateFormat.format(cal.getTime());
 		cal.add(Calendar.WEEK_OF_YEAR, 2);
 		stopDate = dateFormat.format(cal.getTime());
-		entry = new Entry("112311", creationDate, stopDate, jobList.get(0)
-				.getId(), 44444, 11);
+		entry = new Entry("112311", creationDate, stopDate, jobList.get(0).getId(), 44444, 11);
 		entry.setBaseRate(11);
 		entry.setPayPeriodId(payPeriodList.get(0).getId());
 		db.createEntry(entry);
@@ -227,7 +261,6 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
@@ -248,7 +281,6 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	public void toStartClock(View view) {
-		// Toast.makeText(this, "adsfadsf", Toast.LENGTH_SHORT).show();
 		startActivity(new Intent(this, StartClockActivity.class));
 	}
 
@@ -275,29 +307,24 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	public void showDialog(View view) {
-		DeleteEntriesByDateDialog dialog = DeleteEntriesByDateDialog
-				.newInstance();
+		DeleteEntriesByDateDialog dialog = DeleteEntriesByDateDialog.newInstance();
 		dialog.show(getSupportFragmentManager(), "date");
 	}
 
 	@Override
 	public void onDeleteEntriesListener(Date date) {
-		SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM, yyyy",
-				Locale.getDefault());
+		SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM, yyyy", Locale.getDefault());
 
-		DeleteEntriestConfirmDialog dialog = DeleteEntriestConfirmDialog
-				.newInstance(formatter.format(date));
+		DeleteEntriestConfirmDialog dialog = DeleteEntriestConfirmDialog.newInstance(formatter
+				.format(date));
 		dialog.show(getSupportFragmentManager(), "date");
 	}
 
 	@Override
 	public void onDeleteEntriesConfirmListener(String dateAsString) {
-		SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM, yyyy",
-				Locale.getDefault());
+		SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM, yyyy", Locale.getDefault());
 		try {
 			Date date = formatter.parse(dateAsString);
-			Toast.makeText(this, date.toString(), Toast.LENGTH_LONG).show();
-			Log.d("date", date.toString());
 			db.deleteEntriesOlderThanDate(date);
 		} catch (ParseException e) {
 			e.printStackTrace();

@@ -43,10 +43,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String KEY_ID = "id";
 	private static final String KEY_CREATED_AT = "created_at";
 
-	private int id;
-	private String date;
-	private int jobId;
-	private Integer money;
 	// PayPeriod Table - column names
 	private static final String PAY_PERIOD_PAY_DATE = "payDate";
 	private static final String PAY_PERIOD_JOB_ID = "job_Id";
@@ -56,6 +52,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String KEY_JOB_NAME = "name";
 	private static final String JOB_IS_WORKING = "isWoriking";
 	private static final String JOB_HOUR_PRICE = "hourPrice";
+	private static final String JOB_DEDUCTION = "deduction";
+	private static final String JOB_TIME_PER_DAY = "time_per_day";
+	private static final String JOB_TAX_PERCENTAGE = "tax_percentage";
+	private static final String JOB_STARTED_WORKING_AT = "stared_working_at";
 
 	// TAGS Table - column names
 	private static final String KEY_TAG_NAME = "name";
@@ -74,40 +74,37 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String ENTRY_PAY_PERIOD_ID = "pay_period_id";
 
 	// Tag table create statement
-	private static final String CREATE_TABLE_TAG = "CREATE TABLE " + TABLE_TAG
-			+ "(" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_TAG_NAME + " TEXT,"
-			+ KEY_CREATED_AT + " DATETIME" + ")";
+	private static final String CREATE_TABLE_TAG = "CREATE TABLE " + TABLE_TAG + "(" + KEY_ID
+			+ " INTEGER PRIMARY KEY," + KEY_TAG_NAME + " TEXT," + KEY_CREATED_AT + " DATETIME"
+			+ ")";
 
 	// Table Create Statements
 
 	// Job Pay Periods create statement
-	private static final String CREATE_TABLE_PAY_PERIOD = "CREATE TABLE "
-			+ TABLE_PAY_PERIODS + "(" + KEY_ID + " INTEGER PRIMARY KEY,"
-			+ PAY_PERIOD_PAY_DATE + " DATETIME," + PAY_PERIOD_MONEY
-			+ " INTEGER," + PAY_PERIOD_JOB_ID + " INTEGER,"
+	private static final String CREATE_TABLE_PAY_PERIOD = "CREATE TABLE " + TABLE_PAY_PERIODS + "("
+			+ KEY_ID + " INTEGER PRIMARY KEY," + PAY_PERIOD_PAY_DATE + " DATETIME,"
+			+ PAY_PERIOD_MONEY + " INTEGER," + PAY_PERIOD_JOB_ID + " INTEGER,"
 			+ "FOREIGN KEY(job_id) REFERENCES jobs(id)" + ")";
 
 	// Job table create statement
-	private static final String CREATE_TABLE_JOB = "CREATE TABLE " + TABLE_JOB
-			+ "(" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_JOB_NAME + " TEXT,"
-			+ KEY_CREATED_AT + " DATETIME," + JOB_IS_WORKING + " BOOLEAN,"
+	private static final String CREATE_TABLE_JOB = "CREATE TABLE " + TABLE_JOB + "(" + KEY_ID
+			+ " INTEGER PRIMARY KEY," + KEY_JOB_NAME + " TEXT," + KEY_CREATED_AT + " DATETIME,"
+			+ JOB_STARTED_WORKING_AT + " DATETIME," + JOB_IS_WORKING + " BOOLEAN," + JOB_DEDUCTION
+			+ " INTEGER," + JOB_TIME_PER_DAY + " INTEGER," + JOB_TAX_PERCENTAGE + " INTEGER,"
 			+ JOB_HOUR_PRICE + " INTEGER" + ")";
 
 	// Entries table create statement
-	private static final String CREATE_TABLE_ENTRIES = "CREATE TABLE "
-			+ TABLE_ENTRIES + "(" + KEY_ID + " INTEGER PRIMARY KEY,"
-			+ EARNED_MONEY + " INTEGER," + COMMENT + " TEXT," + START_CLOCK
-			+ " DATETIME," + STOP_CLOCK + " DATETIME," + JOB_ID + " INTEGER,"
+	private static final String CREATE_TABLE_ENTRIES = "CREATE TABLE " + TABLE_ENTRIES + "("
+			+ KEY_ID + " INTEGER PRIMARY KEY," + EARNED_MONEY + " INTEGER," + COMMENT + " TEXT,"
+			+ START_CLOCK + " DATETIME," + STOP_CLOCK + " DATETIME," + JOB_ID + " INTEGER,"
 			+ ENTRY_BASE_RATE + " INTEGER," + " pay_period_id INTEGER, "
 			+ " FOREIGN KEY(job_id) REFERENCES jobs(id) "
-
 			+ " FOREIGN KEY(pay_period_id) REFERENCES payPeriods(id)" + ")";
 
 	// todo_tag table create statement
-	private static final String CREATE_TABLE_JOBS_TAG = "CREATE TABLE "
-			+ TABLE_JOBS_TAG + "(" + KEY_ID + " INTEGER PRIMARY KEY,"
-			+ KEY_JOB_ID + " INTEGER," + KEY_TAG_ID + " INTEGER,"
-			+ KEY_CREATED_AT + " DATETIME" + ")";
+	private static final String CREATE_TABLE_JOBS_TAG = "CREATE TABLE " + TABLE_JOBS_TAG + "("
+			+ KEY_ID + " INTEGER PRIMARY KEY," + KEY_JOB_ID + " INTEGER," + KEY_TAG_ID
+			+ " INTEGER," + KEY_CREATED_AT + " DATETIME" + ")";
 
 	public DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -176,8 +173,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	}
 
 	public PayPeriod getPayPeriodById(long id) {
-		String selectQuery = "SELECT * FROM " + TABLE_PAY_PERIODS
-				+ " WHERE id == " + id;
+		String selectQuery = "SELECT * FROM " + TABLE_PAY_PERIODS + " WHERE id == " + id;
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor c = db.rawQuery(selectQuery, null);
 		PayPeriod payPeriod = null;
@@ -185,8 +181,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		if (c.moveToFirst()) {
 			payPeriod = new PayPeriod();
 			payPeriod.setId(c.getInt((c.getColumnIndex(KEY_ID))));
-			payPeriod
-					.setDate(c.getString(c.getColumnIndex(PAY_PERIOD_PAY_DATE)));
+			payPeriod.setDate(c.getString(c.getColumnIndex(PAY_PERIOD_PAY_DATE)));
 			payPeriod.setJobId(c.getInt(c.getColumnIndex(PAY_PERIOD_JOB_ID)));
 			payPeriod.setMoney(c.getInt(c.getColumnIndex(PAY_PERIOD_MONEY)));
 		}
@@ -204,12 +199,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			do {
 				PayPeriod payPeriod = new PayPeriod();
 				payPeriod.setId(c.getInt((c.getColumnIndex(KEY_ID))));
-				payPeriod.setDate(c.getString(c
-						.getColumnIndex(PAY_PERIOD_PAY_DATE)));
-				payPeriod
-						.setJobId(c.getInt(c.getColumnIndex(PAY_PERIOD_JOB_ID)));
-				payPeriod
-						.setMoney(c.getInt(c.getColumnIndex(PAY_PERIOD_MONEY)));
+				payPeriod.setDate(c.getString(c.getColumnIndex(PAY_PERIOD_PAY_DATE)));
+				payPeriod.setJobId(c.getInt(c.getColumnIndex(PAY_PERIOD_JOB_ID)));
+				payPeriod.setMoney(c.getInt(c.getColumnIndex(PAY_PERIOD_MONEY)));
 
 				payPeriods.add(payPeriod);
 			} while (c.moveToNext());
@@ -219,8 +211,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	}
 
 	public Entry getEntryById(long id) {
-		String selectQuery = "SELECT * FROM " + TABLE_ENTRIES + " WHERE id == "
-				+ id;
+		String selectQuery = "SELECT * FROM " + TABLE_ENTRIES + " WHERE id == " + id;
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor c = db.rawQuery(selectQuery, null);
 		Entry entry = null;
@@ -266,8 +257,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	}
 
 	public List<Entry> getAllEntriesByJobId(int jobId) {
-		String selectQuery = "SELECT * FROM " + TABLE_ENTRIES
-				+ " WHERE job_id == " + jobId;
+		String selectQuery = "SELECT * FROM " + TABLE_ENTRIES + " WHERE job_id == " + jobId;
 		SQLiteDatabase db = this.getReadableDatabase();
 		List<Entry> entries = new ArrayList<Entry>();
 		Cursor cursor = db.rawQuery(selectQuery, null);
@@ -275,17 +265,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			do {
 				Entry entry = new Entry();
 				entry.setId(cursor.getInt((cursor.getColumnIndex(KEY_ID))));
-				entry.setComment(cursor.getString(cursor
-						.getColumnIndex(COMMENT)));
-				entry.setStopClock(cursor.getString(cursor
-						.getColumnIndex(STOP_CLOCK)));
-				entry.setStartClock(cursor.getString(cursor
-						.getColumnIndex(START_CLOCK)));
-				entry.setEarned_money(cursor.getInt(cursor
-						.getColumnIndex(EARNED_MONEY)));
+				entry.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
+				entry.setStopClock(cursor.getString(cursor.getColumnIndex(STOP_CLOCK)));
+				entry.setStartClock(cursor.getString(cursor.getColumnIndex(START_CLOCK)));
+				entry.setEarned_money(cursor.getInt(cursor.getColumnIndex(EARNED_MONEY)));
 				entry.setJobId(cursor.getInt(cursor.getColumnIndex(JOB_ID)));
-				entry.setBaseRate(cursor.getInt(cursor
-						.getColumnIndex(ENTRY_BASE_RATE)));
+				entry.setBaseRate(cursor.getInt(cursor.getColumnIndex(ENTRY_BASE_RATE)));
 
 				entries.add(entry);
 			} while (cursor.moveToNext());
@@ -294,24 +279,38 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		return entries;
 	}
 
-	public Job getJobById(long id) {
-		String selectQuery = "SELECT * FROM " + TABLE_JOB + " WHERE id == "
-				+ id;
-		SQLiteDatabase db = this.getReadableDatabase();
-		Cursor c = db.rawQuery(selectQuery, null);
-		Job job = null;
-		if (c.moveToFirst()) {
-			job = new Job();
-			job.setId(c.getInt(c.getColumnIndex(KEY_ID)));
-			job.setName((c.getString(c.getColumnIndex(KEY_JOB_NAME))));
-			job.setCreated_at(c.getString(c.getColumnIndex(KEY_CREATED_AT)));
-			job.setHourPrice(c.getInt(c.getColumnIndex(JOB_HOUR_PRICE)));
-			// adding to tags list
-		}
+	public List<Entry> getAllEntriesByPayPeriodId(int payPeriodId) {
 
-		// c.close();
-		// db.close();
-		return job;
+		String selectQuery = "SELECT * FROM " + TABLE_ENTRIES + " WHERE pay_period_id == "
+				+ payPeriodId;
+		SQLiteDatabase db = this.getReadableDatabase();
+		List<Entry> entries = new ArrayList<Entry>();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		if (cursor.moveToFirst()) {
+			do {
+				Entry entry = new Entry();
+				entry.setId(cursor.getInt((cursor.getColumnIndex(KEY_ID))));
+				entry.setComment(cursor.getString(cursor.getColumnIndex(COMMENT)));
+				entry.setStopClock(cursor.getString(cursor.getColumnIndex(STOP_CLOCK)));
+				entry.setStartClock(cursor.getString(cursor.getColumnIndex(START_CLOCK)));
+				entry.setEarned_money(cursor.getInt(cursor.getColumnIndex(EARNED_MONEY)));
+				entry.setJobId(cursor.getInt(cursor.getColumnIndex(JOB_ID)));
+				entry.setBaseRate(cursor.getInt(cursor.getColumnIndex(ENTRY_BASE_RATE)));
+
+				entries.add(entry);
+			} while (cursor.moveToNext());
+		}
+		db.close();
+		return entries;
+
+	}
+
+	public void deleteEntriesOlderThanDate(Date date) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale
+				.getDefault());
+		final SQLiteDatabase db = this.getWritableDatabase();
+
+		db.delete(TABLE_ENTRIES, START_CLOCK + " < '" + dateFormat.format(date) + "'", null);
 	}
 
 	public int updateEntry(Entry entry) {
@@ -321,24 +320,101 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		values.put(START_CLOCK, entry.getStartClock());
 		values.put(STOP_CLOCK, entry.getStopClock());
 		values.put(COMMENT, entry.getComment());
+		values.put(JOB_ID, entry.getJobId());
+		values.put(ENTRY_BASE_RATE, entry.getBaseRate());
 
 		// updating row
-		return db.update(TABLE_ENTRIES, values, KEY_ID + " = ?",
-				new String[] { String.valueOf(entry.getId()) });
+		return db.update(TABLE_ENTRIES, values, KEY_ID + " = ?", new String[] { String
+				.valueOf(entry.getId()) });
 	}
 
-	public void deleteEntriesOlderThanDate(Date date) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat(
-				"yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+	public int updateJob(Job job) {
 		final SQLiteDatabase db = this.getWritableDatabase();
 
-		db.delete(TABLE_ENTRIES, START_CLOCK + " < '" + dateFormat.format(date)
-				+ "'", null);
+		ContentValues values = new ContentValues();
+		values.put(KEY_JOB_NAME, job.getName());
+		values.put(JOB_HOUR_PRICE, job.getHourPrice());
+		values.put(JOB_IS_WORKING, job.getIsWorking());
+		values.put(KEY_CREATED_AT, getDateTime());
+		values.put(JOB_DEDUCTION, job.getDeduction());
+		values.put(JOB_TAX_PERCENTAGE, job.getTaxPercentage());
+		values.put(JOB_TIME_PER_DAY, job.getTimePerDate());
+
+		int id = db.update(TABLE_JOB, values, KEY_ID + " = ?", new String[] { String.valueOf(job
+				.getId()) });
+		db.close();
+		return id;
 	}
 
-	/**
-	 * Creating a todo
-	 */
+	public String startWork(int jobId) {
+		final SQLiteDatabase db = this.getWritableDatabase();
+		String currentDateTime = getDateTime();
+		ContentValues values = new ContentValues();
+		values.put(JOB_IS_WORKING, true);
+		values.put(JOB_STARTED_WORKING_AT, currentDateTime);
+
+		db.update(TABLE_JOB, values, KEY_ID + " = ?", new String[] { String.valueOf(jobId) });
+		db.close();
+
+		return currentDateTime;
+	}
+
+	public int stopWork(int jobId) {
+		final SQLiteDatabase db = this.getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put(JOB_IS_WORKING, false);
+
+		int id = db.update(TABLE_JOB, values, KEY_ID + " = ?",
+				new String[] { String.valueOf(jobId) });
+		db.close();
+		return id;
+	}
+
+	public Job getJobByName(String jobName) {
+		String selectQuery = "SELECT * FROM " + TABLE_JOB + " WHERE " + KEY_JOB_NAME + " == '"
+				+ jobName + "'";
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor c = db.rawQuery(selectQuery, null);
+		Job job = null;
+		if (c.moveToFirst()) {
+			job = new Job();
+			job.setId(c.getInt(c.getColumnIndex(KEY_ID)));
+			job.setName((c.getString(c.getColumnIndex(KEY_JOB_NAME))));
+			job.setCreated_at(c.getString(c.getColumnIndex(KEY_CREATED_AT)));
+			job.setHourPrice(c.getInt(c.getColumnIndex(JOB_HOUR_PRICE)));
+			job.setDeduction(c.getInt((c.getColumnIndex(JOB_DEDUCTION))));
+			job.setTaxPercentage(c.getInt((c.getColumnIndex(JOB_TAX_PERCENTAGE))));
+			job.setTimePerDate(c.getInt((c.getColumnIndex(JOB_TIME_PER_DAY))));
+			job.setIsWorking(c.getInt((c.getColumnIndex(JOB_IS_WORKING))) == 1);
+			job.setStartWorkAt(c.getString(c.getColumnIndex(JOB_STARTED_WORKING_AT)));
+		}
+
+		return job;
+	}
+
+	public Job getJobById(long id) {
+		String selectQuery = "SELECT * FROM " + TABLE_JOB + " WHERE id == " + id;
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor c = db.rawQuery(selectQuery, null);
+		Job job = null;
+		if (c.moveToFirst()) {
+			job = new Job();
+			job.setId(c.getInt(c.getColumnIndex(KEY_ID)));
+			job.setName((c.getString(c.getColumnIndex(KEY_JOB_NAME))));
+			job.setCreated_at(c.getString(c.getColumnIndex(KEY_CREATED_AT)));
+			job.setHourPrice(c.getInt(c.getColumnIndex(JOB_HOUR_PRICE)));
+			job.setDeduction(c.getInt((c.getColumnIndex(JOB_DEDUCTION))));
+			job.setTaxPercentage(c.getInt((c.getColumnIndex(JOB_TAX_PERCENTAGE))));
+			job.setTimePerDate(c.getInt((c.getColumnIndex(JOB_TIME_PER_DAY))));
+			job.setIsWorking(c.getInt((c.getColumnIndex(JOB_IS_WORKING))) == 1);
+			job.setStartWorkAt(c.getString(c.getColumnIndex(JOB_STARTED_WORKING_AT)));
+		}
+
+		// c.close();
+		// db.close();
+		return job;
+	}
+
 	public long createJob(Job job, long[] tag_ids) {
 		SQLiteDatabase db = this.getWritableDatabase();
 
@@ -347,6 +423,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		values.put(JOB_HOUR_PRICE, job.getHourPrice());
 		values.put(JOB_IS_WORKING, job.getIsWorking());
 		values.put(KEY_CREATED_AT, getDateTime());
+		values.put(JOB_DEDUCTION, job.getDeduction());
+		values.put(JOB_TAX_PERCENTAGE, job.getTaxPercentage());
+		values.put(JOB_TIME_PER_DAY, job.getTimePerDate());
 
 		// insert row
 		long job_id = db.insert(TABLE_JOB, null, values);
@@ -358,14 +437,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			}
 		}
 
-		// db.close();
+		 db.close();
 		return job_id;
 	}
 
-	// todo make it DRY
+	// TODO make it DRY
 	public List<Job> getOnClockJobs() {
-		String selectQuery = "SELECT * FROM " + TABLE_JOB
-				+ " WHERE isWoriking == 1";
+		String selectQuery = "SELECT * FROM " + TABLE_JOB + " WHERE isWoriking == 1";
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor c = db.rawQuery(selectQuery, null);
 		List<Job> jobs = new ArrayList<Job>();
@@ -382,13 +460,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		}
 
 		// c.close();
-		// db.close();
+		 db.close();
 		return jobs;
 	}
 
 	public List<Job> getOffClockJobs() {
-		String selectQuery = "SELECT * FROM " + TABLE_JOB
-				+ " WHERE isWoriking == 0";
+		String selectQuery = "SELECT * FROM " + TABLE_JOB + " WHERE isWoriking == 0";
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor c = db.rawQuery(selectQuery, null);
 		List<Job> jobs = new ArrayList<Job>();
@@ -425,22 +502,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public List<Job> getAllJobs() {
 		List<Job> jobs = new ArrayList<Job>();
 		String selectQuery = "SELECT  * FROM " + TABLE_JOB;
-
-		// Log.e(LOG, selectQuery);
-
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor c = db.rawQuery(selectQuery, null);
 
-		// looping through all rows and adding to list
 		if (c.moveToFirst()) {
 			do {
-				Job td = new Job();
-				td.setId(c.getInt((c.getColumnIndex(KEY_ID))));
-				td.setName((c.getString(c.getColumnIndex(KEY_JOB_NAME))));
-				td.setCreated_at(c.getString(c.getColumnIndex(KEY_CREATED_AT)));
+				Job job = new Job();
+				job.setId(c.getInt((c.getColumnIndex(KEY_ID))));
+				job.setName((c.getString(c.getColumnIndex(KEY_JOB_NAME))));
+				job.setCreated_at(c.getString(c.getColumnIndex(KEY_CREATED_AT)));
+				job.setDeduction(c.getInt((c.getColumnIndex(JOB_DEDUCTION))));
+				job.setTaxPercentage(c.getInt((c.getColumnIndex(JOB_TAX_PERCENTAGE))));
+				job.setTimePerDate(c.getInt((c.getColumnIndex(JOB_TIME_PER_DAY))));
+				job.setStartWorkAt(c.getString(c.getColumnIndex(JOB_STARTED_WORKING_AT)));
 
-				// adding to todo list
-				jobs.add(td);
+				jobs.add(job);
 			} while (c.moveToNext());
 		}
 		// c.close();
@@ -461,16 +537,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	}
 
 	private String getDateTime() {
-		SimpleDateFormat dateFormat = new SimpleDateFormat(
-				"yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale
+				.getDefault());
 		Date date = new Date();
 		return dateFormat.format(date);
 
 	}
 
-	/**
-	 * Creating tag
-	 */
 	public long createTag(Tag tag) {
 		SQLiteDatabase db = this.getWritableDatabase();
 
@@ -513,8 +586,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	public void deleteEntry(int entryId) {
 		SQLiteDatabase db = this.getWritableDatabase();
-		String deleteQuery = "DELETE FROM " + TABLE_ENTRIES + " WHERE id == "
-				+ entryId;
+		String deleteQuery = "DELETE FROM " + TABLE_ENTRIES + " WHERE id == " + entryId;
 		Log.d("delete", deleteQuery);
 
 		db.execSQL(deleteQuery);

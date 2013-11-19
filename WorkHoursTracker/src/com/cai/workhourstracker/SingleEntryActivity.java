@@ -1,44 +1,33 @@
 package com.cai.workhourstracker;
 
-import java.math.BigDecimal;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
+
 import java.util.Locale;
 
-import org.w3c.dom.Comment;
-
-import com.cai.workhourstracker.JobsFragment.SectionComposerAdapter;
-import com.cai.workhourstracker.dialogs.DeleteEntriesByDateDialog;
-import com.cai.workhourstracker.dialogs.DeleteEntriesByDateDialog.IDeleteEntriesListener;
-import com.cai.workhourstracker.dialogs.DeleteEntriestConfirmDialog;
-import com.cai.workhourstracker.dialogs.DeleteEntriestConfirmDialog.IDeleteEntriesConfirm;
 import com.cai.workhourstracker.helper.DatabaseHelper;
+import com.cai.workhourstracker.helper.Utils;
 import com.cai.workhourstracker.model.Entry;
 import com.cai.workhourstracker.model.Job;
 
 import android.os.Bundle;
-import android.app.Activity;
+
 import android.content.Intent;
-import android.text.format.DateFormat;
-import android.util.Log;
+
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ListView;
+
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.RemoteViewsService.RemoteViewsFactory;
+
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 
 public class SingleEntryActivity extends FragmentActivity implements
-		DeleteEntryDialogFragment.NoticeDialogListener{
+		DeleteEntryDialogFragment.NoticeDialogListener {
 
 	private DatabaseHelper db;
-	private TextView jobName;
+	private TextView jobNameTextView;
 	private Job job;
 	private Entry entry;
 	private int entryId;
@@ -47,14 +36,12 @@ public class SingleEntryActivity extends FragmentActivity implements
 	private TextView endHour;
 	private TextView workingHours;
 	private TextView comment;
+	private TextView baseRateTextView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.d("d", "create");
 		setContentView(R.layout.activity_single_entry);
-		// Show the Up button in the action bar.
-
 		setupActionBar();
 
 		db = new DatabaseHelper(this);
@@ -66,23 +53,24 @@ public class SingleEntryActivity extends FragmentActivity implements
 		int jobId = entry.getJobId();
 		job = db.getJobById(jobId);
 		db.closeDB();
-		
-		jobName = (TextView) findViewById(R.id.single_entry_job_name);
+
+		jobNameTextView = (TextView) findViewById(R.id.single_entry_job_name);
 		entryDate = (TextView) findViewById(R.id.single_entry_date);
 		startHour = (TextView) findViewById(R.id.single_entry_start_clock);
 		endHour = (TextView) findViewById(R.id.single_entry_end_clock);
 		workingHours = (TextView) findViewById(R.id.single_entry_work_hours);
 		comment = (TextView) findViewById(R.id.single_entry_comment);
+		baseRateTextView = (TextView) findViewById(R.id.single_entry_base_rate);
 
-		jobName.setText(job.getName() + " Entry");
+		baseRateTextView.setText(Utils.convertMoneyToString(entry.getBaseRate()));
+		jobNameTextView.setText(job.getName() + " Entry");
 		comment.setText(entry.getComment());
 
-		SimpleDateFormat dateFormat = new SimpleDateFormat(
-				"yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-		SimpleDateFormat formatterFullDate = new SimpleDateFormat(
-				"EEEE, dd MMMM yyyy", Locale.getDefault());
-		SimpleDateFormat formatterHour = new SimpleDateFormat("HH:mm a",
-				Locale.getDefault());
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale
+				.getDefault());
+		SimpleDateFormat formatterFullDate = new SimpleDateFormat("EEEE, dd MMMM yyyy", Locale
+				.getDefault());
+		SimpleDateFormat formatterHour = new SimpleDateFormat("HH:mm a", Locale.getDefault());
 
 		try {
 			Date startClock = dateFormat.parse(entry.getStartClock());
@@ -112,7 +100,6 @@ public class SingleEntryActivity extends FragmentActivity implements
 		Intent intent = new Intent(this, StartClockActivity.class);
 		CharSequence id = String.valueOf(entryId);
 		intent.putExtra("id", id);
-		Log.d("2", (String) id);
 		startActivity(intent);
 	}
 
@@ -120,9 +107,6 @@ public class SingleEntryActivity extends FragmentActivity implements
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
-
-			// goHome();
-			// finish();
 			NavUtils.navigateUpFromSameTask(this);
 			return true;
 
@@ -143,7 +127,6 @@ public class SingleEntryActivity extends FragmentActivity implements
 
 	@Override
 	public void onDialogPositiveClick(DialogFragment dialog) {
-		// Toast.makeText(this, "positive", Toast.LENGTH_SHORT).show();
 		db.deleteEntry(entryId);
 		db.closeDB();
 		finish();
@@ -158,13 +141,18 @@ public class SingleEntryActivity extends FragmentActivity implements
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == RESULT_OK && requestCode == 100) {
-			String startClock = data.getExtras().getString("startClock");
-			String stopClock = data.getExtras().getString("stopClock");
+			String startClock = Utils.dateToHour(data.getExtras().getString("startClock"));
+			String stopClock = Utils.dateToHour(data.getExtras().getString("stopClock"));
 			String commentString = data.getExtras().getString("comment");
+			String jobName = data.getExtras().getString("jobName");
+			Integer baseRate = data.getExtras().getInt("baseRate");
+
 			startHour.setText(startClock);
 			endHour.setText(stopClock);
 			comment.setText(commentString);
-
+			baseRateTextView.setText(String.valueOf(baseRate));
+			jobNameTextView.setText(jobName + " Entry");
+			baseRateTextView.setText(Utils.convertMoneyToString(baseRate) + "/hour");
 		}
 	}
 }

@@ -54,21 +54,21 @@ public abstract class GroupViewAdapter extends BaseAdapter implements
 	 * {@link #PINNED_HEADER_GONE}, {@link #PINNED_HEADER_VISIBLE} or
 	 * {@link #PINNED_HEADER_PUSHED_UP}.
 	 */
-	public int getPinnedHeaderState(int position) {
-		if (position < 0 || getCount() == 0) {
-			return PINNED_HEADER_GONE;
-		}
-
-		// The header should get pushed up if the top item shown
-		// is the last item in a section for a particular letter.
-		int section = getSectionForPosition(position);
-		int nextSectionPosition = getPositionForSection(section + 1);
-		if (nextSectionPosition != -1 && position == nextSectionPosition - 1) {
-			return PINNED_HEADER_PUSHED_UP;
-		}
-
-		return PINNED_HEADER_VISIBLE;
-	}
+//	public int getPinnedHeaderState(int position) {
+//		if (position < 0 || getCount() == 0) {
+//			return PINNED_HEADER_GONE;
+//		}
+//
+//		// The header should get pushed up if the top item shown
+//		// is the last item in a section for a particular letter.
+//		int section = getSectionForPosition(position);
+//		int nextSectionPosition = getPositionForSection(section + 1);
+//		if (nextSectionPosition != -1 && position == nextSectionPosition - 1) {
+//			return PINNED_HEADER_PUSHED_UP;
+//		}
+//
+//		return PINNED_HEADER_VISIBLE;
+//	}
 
 	/**
 	 * Sets the initial page when {@link #resetPage()} is called. Default is 1
@@ -143,11 +143,7 @@ public abstract class GroupViewAdapter extends BaseAdapter implements
 	 */
 	protected abstract void onNextPageRequested(int page);
 
-	/**
-	 * Configure the view (a listview item) to display headers or not based on
-	 * displaySectionHeader (e.g. if displaySectionHeader
-	 * header.setVisibility(VISIBLE) else header.setVisibility(GONE)).
-	 */
+
 	protected abstract void bindSectionHeader(View view, int position,
 			boolean displaySectionHeader);
 

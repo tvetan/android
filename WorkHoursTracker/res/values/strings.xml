@@ -36,5 +36,7 @@
     <string name="title_activity_edit_entry">EditEntryActivity</string>
     <string name="delete_entries_dialog">This will delete entries for all jobs that are older than the date you select</string>
     <string name="delete">Delete</string>
+    <string name="default_money">$0.00</string>
+    <string name="default_percentage">0.00%</string>
 
 </resources>

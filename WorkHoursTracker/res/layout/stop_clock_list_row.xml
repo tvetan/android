@@ -22,7 +22,7 @@
                 android:layout_height="wrap_content" >
 
                 <TextView
-                    android:id="@+id/day"
+                    android:id="@+id/start_stop_clock_row_day_of_week"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Sun" />
@@ -40,14 +40,14 @@
                 android:layout_height="wrap_content" >
 
                 <TextView
-                    android:id="@+id/start_clock"
+                    android:id="@+id/stop_start_clock_row_start_hour"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="left"
                     android:text="5:00 PM" />
 
                 <TextView
-                    android:id="@+id/end_clock"
+                    android:id="@+id/stop_start_clock_row_stop_hour"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
@@ -63,13 +63,14 @@
             android:orientation="vertical" >
 
             <TextView
-                android:id="@+id/stop_clock_row_price"
+                android:id="@+id/stop_start_clock_row_earned_money"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView" />
+                android:text="TextView"
+                android:textColor="#00ff00" />
 
             <TextView
-                android:id="@+id/work_time"
+                android:id="@+id/stop_start_clock_row_work_hours"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="8h" />

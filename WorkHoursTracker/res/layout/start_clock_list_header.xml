@@ -3,8 +3,8 @@
     android:id="@+id/header"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/borders"
     android:baselineAligned="false"
-    android:divider="?android:attr/dividerVertical"
     android:orientation="horizontal"
     android:padding="5dp" >
 
@@ -18,7 +18,8 @@
             android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/total" />
+            android:text="@string/total"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/textView2"
