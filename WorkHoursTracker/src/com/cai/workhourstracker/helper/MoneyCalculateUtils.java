@@ -9,4 +9,11 @@ public class MoneyCalculateUtils {
 		
 		return moneyRealValue;
 	}
+	
+	public static BigDecimal moneyEarned(double workTimeHours, Integer baseRate) {
+		BigDecimal baseRateRealValue = convertToBigDecimal(baseRate);		
+		BigDecimal moneyEarned = (new BigDecimal(workTimeHours)).multiply(baseRateRealValue);
+		
+		return moneyEarned;
+	}
 }

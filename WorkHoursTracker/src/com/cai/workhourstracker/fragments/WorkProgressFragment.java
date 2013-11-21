@@ -11,10 +11,11 @@ import java.util.concurrent.TimeUnit;
 import com.cai.workhourstracker.ExportSelectionActivity;
 import com.cai.workhourstracker.R;
 import com.cai.workhourstracker.dialogs.DeleteEntriesByDateDialog;
-import com.cai.workhourstracker.helper.DateFormatUtils;
 import com.cai.workhourstracker.helper.MoneyCalculateUtils;
-import com.cai.workhourstracker.helper.MoneyFormatUtils;
 
+import Utils.DateFormatUtils;
+import Utils.MoneyFormatUtils;
+import Utils.ToastUtils;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,7 +38,9 @@ public class WorkProgressFragment extends Fragment {
 	private BigDecimal jobBaseRate;
 	private Date startWorkDate;
 	private ProgressBar workProgressBar;
-	private int i = 0;
+	private Integer timePerDay;
+
+	private int minutesWorked = 0;
 	private final Handler myHandler = new Handler();
 
 	public static WorkProgressFragment newInstance(String startTime, Integer jobBaseRate,
@@ -95,8 +98,6 @@ public class WorkProgressFragment extends Fragment {
 		workProgressTimer = new Timer();
 
 		this.setDefaultValues(arguments);
-
-		workProgressBar.setMax(200);
 		startProgress();
 
 		return rootView;
@@ -110,9 +111,8 @@ public class WorkProgressFragment extends Fragment {
 	}
 
 	private double workTimeElapsed() {
-		Date currentDate = new Date();
-		long diffInMillies = currentDate.getTime() - startWorkDate.getTime();
-		long differenceInMinutes = diffInMillies / (MILLISECONDS_IN_A_SECOND * 60);
+
+		long differenceInMinutes = workTimeInMinutes();
 		double hours = (double) differenceInMinutes / 60;
 
 		return hours;
@@ -131,9 +131,27 @@ public class WorkProgressFragment extends Fragment {
 		progressStartedTimeTextView.setText("since " + startWorkTime);
 		startWorkDate = DateFormatUtils.fromDatabaseFormatToDate(arguments.getString("startTime"));
 		workHoursTextView.setText(workTimeElapsedFormated() + "h");
-
 		jobBaseRate = MoneyCalculateUtils.convertToBigDecimal(arguments.getInt("jobBaseRate"));
+		timePerDay = arguments.getInt("jobTimePerDay");
+		workProgressBar.setMax(getTimePerDayInMinutes());
+		workProgressBar.setProgress(workTimeInMinutes());
+		minutesWorked = workTimeInMinutes();
+		ToastUtils.makeShortToast(getActivity(), String.valueOf(workTimeInMinutes()));
+	}
 
+	private Integer workTimeInMinutes() {
+		Date currentDate = new Date();
+		long diffInMillies = currentDate.getTime() - startWorkDate.getTime();
+		int differenceInMinutes = (int) (diffInMillies / (MILLISECONDS_IN_A_SECOND * 60));
+
+		return differenceInMinutes;
+	}
+
+	private Integer getTimePerDayInMinutes() {
+		int minutes = Integer.valueOf(timePerDay) % 100;
+		int hours = Integer.valueOf(timePerDay) / 100;
+
+		return minutes + hours * 60;
 	}
 
 	private String moneyEanedFormated() {
@@ -150,8 +168,8 @@ public class WorkProgressFragment extends Fragment {
 
 	final Runnable myRunnable = new Runnable() {
 		public void run() {
-			workProgressBar.setProgress(i);
-			workHoursTextView.setText(workTimeElapsedFormated());
+			workProgressBar.setProgress(minutesWorked);
+			workHoursTextView.setText(workTimeElapsedFormated() + "h");
 			earnedMoneyTextView.setText(moneyEanedFormated());
 		}
 	};
@@ -167,7 +185,7 @@ public class WorkProgressFragment extends Fragment {
 	}
 
 	private void UpdateGUI() {
-		i++;
+		minutesWorked++;
 		myHandler.post(myRunnable);
 	}
 }

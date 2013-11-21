@@ -12,14 +12,17 @@ import java.util.Locale;
 import com.cai.workhourstracker.adapters.TabsPagerAdapter;
 import com.cai.workhourstracker.dialogs.DeleteEntriesByDateDialog;
 import com.cai.workhourstracker.dialogs.DeleteEntriestConfirmDialog;
+import com.cai.workhourstracker.dialogs.TimerPickerFragmentWithCancel;
 import com.cai.workhourstracker.dialogs.DeleteEntriesByDateDialog.IDeleteEntriesListener;
 import com.cai.workhourstracker.dialogs.DeleteEntriestConfirmDialog.IDeleteEntriesConfirm;
+import com.cai.workhourstracker.fragments.TimePickerFragment;
 import com.cai.workhourstracker.helper.DatabaseHelper;
 import com.cai.workhourstracker.model.Entry;
 import com.cai.workhourstracker.model.Job;
 import com.cai.workhourstracker.model.PayPeriod;
 import com.cai.workhourstracker.model.Tag;
 
+import Utils.DateFormatUtils;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
@@ -88,7 +91,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
 		//addJobs();
 		//addPayPeriods();
-		//addEntries();
+	//	addEntries();
 	}
 
 	private void addJobs() {
@@ -110,6 +113,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		job.setDeduction(1125);
 		job.setTaxPercentage(2125);
 		job.setTimePerDate(755);
+		Date forJob = new Date();
+		
+		job.setStartWorkAt(DateFormatUtils.toDatabaseFormat(forJob));
 		db.createJob(job, new long[] { tag1_id });
 
 		job = new Job("Worker", false, 1234);
@@ -134,6 +140,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		job.setDeduction(2122);
 		job.setTaxPercentage(2500);
 		job.setTimePerDate(300);
+		job.setStartWorkAt(DateFormatUtils.toDatabaseFormat(forJob));
 		db.createJob(job, new long[] { tag1_id });
 	}
 

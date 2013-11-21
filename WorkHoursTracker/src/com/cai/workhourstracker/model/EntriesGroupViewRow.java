@@ -2,7 +2,7 @@ package com.cai.workhourstracker.model;
 
 import java.util.List;
 
-import com.cai.workhourstracker.helper.Utils;
+import Utils.Utils;
 
 public class EntriesGroupViewRow {
 	private String groupCriteria;

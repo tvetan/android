@@ -8,11 +8,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import com.cai.workhourstracker.dialogs.TimerPickerEndTimeFragmentWithCancel;
+import com.cai.workhourstracker.dialogs.TimerPickerFragmentWithCancel;
+import com.cai.workhourstracker.fragments.DurationPickerFragment;
+import com.cai.workhourstracker.fragments.TagsAddDialogFragment;
 import com.cai.workhourstracker.helper.DatabaseHelper;
-import com.cai.workhourstracker.helper.Utils;
 import com.cai.workhourstracker.model.Entry;
 import com.cai.workhourstracker.model.Job;
 
+import Utils.DateCalculateUtils;
+import Utils.DateFormatUtils;
+import Utils.ToastUtils;
+import Utils.Utils;
 import android.os.Bundle;
 import android.app.ActionBar;
 import android.app.Activity;
@@ -35,6 +42,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
+import android.text.format.DateUtils;
 
 public class EditEntryActivity extends FragmentActivity implements
 		AdapterView.OnItemSelectedListener, TimerPickerFragmentWithCancel.ChangeStartTimeListener,
@@ -61,16 +69,27 @@ public class EditEntryActivity extends FragmentActivity implements
 
 		addCustomActionBar();
 		setContentView(R.layout.activity_edit_entry);
+		getDataBaseValues();
+		initializeData();
+	}
 
+	private void getDataBaseValues() {
 		entryId = getIntent().getExtras().getInt("id");
 		db = new DatabaseHelper(this);
 		entry = db.getEntryById(entryId);
+		jobs = db.getAllJobs();
+		job = db.getJobById(entry.getJobId());
+		jobNames = getJobsNames(jobs);
+		jobNames.add(0, job.getName());
+	}
 
-		initializeDate();
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		db.closeDB();
 	}
 
 	private void setSpinnerSingleValue(Spinner spinner, String value) {
-
 		List<String> values = new ArrayList<String>();
 		values.add(value);
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -80,46 +99,58 @@ public class EditEntryActivity extends FragmentActivity implements
 		spinner.setAdapter(adapter);
 	}
 
-	private void initializeDate() {
-		db = new DatabaseHelper(this);
-		jobs = db.getAllJobs();
-		job = db.getJobById(entry.getJobId());
-		db.close();
-		jobNames = getJobsNames(jobs);
-		jobNames.add(0, job.getName());
+	private void initializeData() {
 		jobsSpinner = (Spinner) findViewById(R.id.edit_entry_jobs);
 		startTime = (Spinner) findViewById(R.id.edit_entry_start_clock);
 		comment = (EditText) findViewById(R.id.edit_entry_comment);
 		tags = (Spinner) findViewById(R.id.edit_entry_tags);
 		baseRate = (EditText) findViewById(R.id.edit_entry_base_rate);
+		endTime = (Spinner) findViewById(R.id.edit_entry_end_clock);
+		duration = (Spinner) findViewById(R.id.edit_entry_duration);
+		comment = (EditText) findViewById(R.id.edit_entry_comment);
 
 		Utils.convertMoneyToString(entry.getBaseRate());
 		baseRate.setText(Utils.convertMoneyToString(entry.getBaseRate()) + "/hour");
 
 		setSpinnerSingleValue(tags, "None");
 		setSpinnerSingleValue(startTime, entry.getStartClock());
+		setSpinnerSingleValue(endTime, entry.getStopClock());
 
-		endTime = (Spinner) findViewById(R.id.edit_entry_end_clock);
+		setUpEvents();
+		setUpJobsSpinner();
+	}
 
-		setSpinnerSingleValue(endTime, entry.getStartClock());
-		duration = (Spinner) findViewById(R.id.edit_entry_duration);
-		comment = (EditText) findViewById(R.id.edit_entry_comment);
+	private void setUpJobsSpinner() {
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_spinner_item, jobNames);
+
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		jobsSpinner.setOnItemSelectedListener(this);
+		jobsSpinner.setAdapter(adapter);
+	}
+
+	private void setUpEvents() {
 
 		startTime.setOnTouchListener(new View.OnTouchListener() {
 			public boolean onTouch(View v, MotionEvent event) {
 				if (event.getAction() == MotionEvent.ACTION_UP) {
-					TimerPickerFragmentWithCancel dialog = new TimerPickerFragmentWithCancel();
+					int minutes = DateFormatUtils.getMinutes(entry.getStartClock());
+					int hours = DateFormatUtils.getHours(entry.getStartClock());
+					TimerPickerFragmentWithCancel dialog = TimerPickerFragmentWithCancel
+							.newInstance(hours, minutes);
 					dialog.show(getSupportFragmentManager(), "pick time");
 				}
 				return true;
 			}
-
 		});
 
 		endTime.setOnTouchListener(new View.OnTouchListener() {
 			public boolean onTouch(View v, MotionEvent event) {
 				if (event.getAction() == MotionEvent.ACTION_UP) {
-					TimerPickerEndTimeFragmentWithCancel dialog = new TimerPickerEndTimeFragmentWithCancel();
+					int hours = DateFormatUtils.getHours(entry.getStopClock());
+					int minutes = DateFormatUtils.getMinutes(entry.getStopClock());
+					TimerPickerEndTimeFragmentWithCancel dialog = TimerPickerEndTimeFragmentWithCancel
+							.newInstance(hours, minutes);
 					dialog.show(getSupportFragmentManager(), "pick time");
 				}
 				return true;
@@ -134,7 +165,6 @@ public class EditEntryActivity extends FragmentActivity implements
 				}
 				return true;
 			}
-
 		});
 
 		tags.setOnTouchListener(new View.OnTouchListener() {
@@ -145,7 +175,6 @@ public class EditEntryActivity extends FragmentActivity implements
 				}
 				return true;
 			}
-
 		});
 
 		baseRate.setOnFocusChangeListener(new OnFocusChangeListener() {
@@ -162,17 +191,11 @@ public class EditEntryActivity extends FragmentActivity implements
 					String baseRateViewText = baseRate.getText().toString();
 					baseRate.setText("$" + baseRateViewText + "/hour");
 					layout.removeViewAt(0);
-					//layout.removeView(view);
+					// layout.removeView(view);
 				}
 			}
 		});
 
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_spinner_item, jobNames);
-
-		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		jobsSpinner.setOnItemSelectedListener(this);
-		jobsSpinner.setAdapter(adapter);
 	}
 
 	private void addCustomActionBar() {
@@ -243,11 +266,27 @@ public class EditEntryActivity extends FragmentActivity implements
 		// TODO Auto-generated method stub
 	}
 
+	private boolean areEntryDatesValid(Entry entry) {
+		Date startClock = DateFormatUtils.fromDatabaseFormatToDate(entry.getStartClock());
+		Date stopClock = DateFormatUtils.fromDatabaseFormatToDate(entry.getStopClock());
+		long difference = stopClock.getTime() - startClock.getTime();
+
+		if (difference < 0) {
+			ToastUtils.makeShortToast(this, "Work time period can't be negative");
+			return false;
+		}
+
+		return true;
+	}
+
 	@Override
 	public void onChangeStartTime(String time) {
 		entry.setStartClock(time);
+		if (!areEntryDatesValid(entry)) {
+			entry.setStartClock(entry.getStopClock());
+		}
 		List<String> currentTime = new ArrayList<String>();
-		currentTime.add(time);
+		currentTime.add(entry.getStartClock());
 
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_spinner_item, currentTime);
@@ -261,8 +300,11 @@ public class EditEntryActivity extends FragmentActivity implements
 	public void onChangeEndTime(String time) {
 
 		entry.setStopClock(time);
+		if (!areEntryDatesValid(entry)) {
+			entry.setStopClock(entry.getStartClock());
+		}
 		List<String> currentTime = new ArrayList<String>();
-		currentTime.add(time);
+		currentTime.add(entry.getStopClock());
 
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_spinner_item, currentTime);
@@ -338,7 +380,6 @@ public class EditEntryActivity extends FragmentActivity implements
 	@Override
 	public void onTagsChangeTime(String time) {
 		// TODO Auto-generated method stub
-
 	}
 
 	public void onUnpaidRate(View view) {

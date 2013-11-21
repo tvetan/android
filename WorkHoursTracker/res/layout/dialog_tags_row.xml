@@ -8,11 +8,14 @@
         android:id="@+id/dialog_tag_row_tag_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="tag name" />
+        android:layout_weight="7"
+        android:text="tag name" 
+        android:focusable="false"/>
 
     <CheckBox
         android:id="@+id/dialog_tag_row_checkbox"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:focusable="false" />
 
 </LinearLayout>

@@ -5,16 +5,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-
+import com.cai.workhourstracker.fragments.DurationPickerFragment;
+import com.cai.workhourstracker.fragments.TagsAddDialogFragment;
 import com.cai.workhourstracker.helper.DatabaseHelper;
-import com.cai.workhourstracker.helper.EmptyUtils;
-import com.cai.workhourstracker.helper.MoneyFormatUtils;
-import com.cai.workhourstracker.helper.Utils;
 import com.cai.workhourstracker.model.Job;
 
+import Utils.EmptyUtils;
+import Utils.MoneyFormatUtils;
+import Utils.Utils;
 import android.os.Bundle;
 import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
@@ -47,12 +47,6 @@ public class EditJobActivity extends FragmentActivity implements
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// BEGIN_INCLUDE (inflate_set_custom_view)
-		// Inflate a "Done" custom action bar view to serve as the "Up"
-		// affordance.
-		// final LayoutInflater inflater = (LayoutInflater) getActionBar()
-		// .getThemedContext().getSystemService(LAYOUT_INFLATER_SERVICE);
-
 		LayoutInflater inflater = (LayoutInflater) this
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		final View customActionBarView = inflater
@@ -117,8 +111,15 @@ public class EditJobActivity extends FragmentActivity implements
 
 		setValuesFromJob(editedJob);
 	}
-	
-	
+
+	@Override
+	public void finish() {
+		Intent intent = new Intent();
+		setResult(RESULT_OK, intent);
+
+		super.finish();
+	}
+
 	private Job createJobFromFields() {
 		String jobName = jobNameEditText.getText().toString();
 		String baseRate = jobBaseRateEditText.getText().toString();
@@ -143,7 +144,7 @@ public class EditJobActivity extends FragmentActivity implements
 		if (editedJob.getTimePerDate() != null) {
 			setSpinnerSingleValue(timePerDaySpinner, String.valueOf(editedJob.getTimePerDate()));
 		}
-		
+
 		// TODO ADD THE OTHER ONES THE % AND LV
 	}
 

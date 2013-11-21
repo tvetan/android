@@ -7,92 +7,107 @@
     tools:context=".StartClockActivity" >
 
     <LinearLayout
-        android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/textlines"
-        android:padding="10dp" >
+        android:background="#E0E0E0"
+        android:orientation="vertical" >
 
-        <FrameLayout
-            android:id="@+id/cancel_button"
-            style="?android:actionButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" >
+        <LinearLayout
+            android:id="@+id/job_name_base_rate_layout"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:background="@drawable/borders"
+            android:padding="10dp" >
 
-            <TextView
-                android:id="@+id/job_name_main_stop_clock"
-                android:layout_width="wrap_content"
+            <FrameLayout
+                android:id="@+id/cancel_button"
+                style="?android:actionButtonStyle"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="TextView" />
-        </FrameLayout>
+                android:layout_weight="1" >
 
-        <TextView
-            android:id="@+id/start_clock_job_price"
-            android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/job_name_main_stop_clock"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TextView"
+                    android:textStyle="bold" />
+            </FrameLayout>
+
+            <FrameLayout
+                style="?android:actionButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" >
+
+                <TextView
+                    android:id="@+id/start_clock_job_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    android:text=""
+                    android:textColor="#00ff00" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/start_stop_buttons_linear_layout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView"
-            android:textColor="#00ff00" />
+            android:divider="?android:attr/dividerVertical"
+            android:dividerPadding="6dp"
+            android:orientation="horizontal"
+            android:showDividers="middle" >
+
+            <FrameLayout
+                android:id="@+id/done_button"
+                style="?android:actionButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:paddingLeft="30dp"
+                android:textAlignment="center" >
+
+                <TextView
+                    android:id="@+id/start_clock_button"
+                    style="?android:actionBarTabTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"
+                    android:paddingRight="20dp"
+                    android:text="Start Clock"
+                    android:background="?android:attr/activatedBackgroundIndicator" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/actionbar_start"
+                style="?android:actionButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:paddingLeft="20dp"
+                android:textAlignment="center" >
+
+                <TextView
+                    android:id="@+id/stop_clock_button"
+                    style="?android:actionBarTabTextStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"
+                    android:paddingRight="20dp"
+                    android:text="Stop Clock" />
+            </FrameLayout>
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linearLayout2"
+        android:id="@+id/work_progress_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/linearLayout1"
-        android:divider="?android:attr/dividerVertical"
-        android:dividerPadding="6dp"
-        android:orientation="horizontal"
-        android:showDividers="middle" >
-
-        <FrameLayout
-            android:id="@+id/done_button"
-            style="?android:actionButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:paddingLeft="30dp"
-            android:textAlignment="center" >
-
-            <TextView
-                android:id="@+id/start_clock_button"
-                style="?android:actionBarTabTextStyle"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:drawablePadding="8dp"
-                android:gravity="center_vertical"
-                android:paddingRight="20dp"
-                android:text="Start Clock"
-                />"
-        </FrameLayout>
-
-        <FrameLayout
-            android:id="@+id/actionbar_start"
-            style="?android:actionButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:paddingLeft="20dp"
-            android:textAlignment="center" >
-
-            <TextView
-                android:id="@+id/stop_clock_button"
-                style="?android:actionBarTabTextStyle"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:drawablePadding="8dp"
-                android:gravity="center_vertical"
-                android:paddingRight="20dp"
-                android:text="Stop Clock" />
-        </FrameLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/work_progress_container" >
+        android:orientation="horizontal" >
     </LinearLayout>
 
     <ListView

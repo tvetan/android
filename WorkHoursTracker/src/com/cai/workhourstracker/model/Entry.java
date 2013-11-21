@@ -3,8 +3,8 @@ package com.cai.workhourstracker.model;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import com.cai.workhourstracker.helper.Utils;
 
+import Utils.Utils;
 import android.util.Log;
 
 public class Entry {

@@ -23,11 +23,13 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
+import com.cai.workhourstracker.fragments.DurationPickerFragment;
+import com.cai.workhourstracker.fragments.TagsAddDialogFragment;
 import com.cai.workhourstracker.helper.DatabaseHelper;
-import com.cai.workhourstracker.helper.EmptyUtils;
-import com.cai.workhourstracker.helper.Utils;
 import com.cai.workhourstracker.model.Job;
 
+import Utils.EmptyUtils;
+import Utils.Utils;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;

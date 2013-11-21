@@ -1,8 +1,8 @@
 package com.cai.workhourstracker.adapters;
 
-import com.cai.workhourstracker.EntriesFragment;
-import com.cai.workhourstracker.JobsFragment;
-import com.cai.workhourstracker.PayPeriodsFragment;
+import com.cai.workhourstracker.fragments.EntriesFragment;
+import com.cai.workhourstracker.fragments.JobsFragment;
+import com.cai.workhourstracker.fragments.PayPeriodsFragment;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

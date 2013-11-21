@@ -172,6 +172,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		return payPeriodId;
 	}
 
+	public List<PayPeriod> getAllPayPeriodsByJobId(int jobId) {
+		String selectQuery = "SELECT * FROM " + TABLE_PAY_PERIODS + " WHERE job_id == " + jobId;
+		SQLiteDatabase db = this.getReadableDatabase();
+		List<PayPeriod> payPeriods = new ArrayList<PayPeriod>();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		if (cursor.moveToFirst()) {
+			do {
+				PayPeriod payPeriod = new PayPeriod();
+				payPeriod.setId(cursor.getInt((cursor.getColumnIndex(KEY_ID))));
+				payPeriod.setDate(cursor.getString(cursor.getColumnIndex(PAY_PERIOD_PAY_DATE)));
+				payPeriod.setJobId(cursor.getInt(cursor.getColumnIndex(PAY_PERIOD_JOB_ID)));
+				payPeriod.setMoney(cursor.getInt(cursor.getColumnIndex(PAY_PERIOD_MONEY)));
+
+				payPeriods.add(payPeriod);
+			} while (cursor.moveToNext());
+		}
+		db.close();
+		return payPeriods;
+	}
+
 	public PayPeriod getPayPeriodById(long id) {
 		String selectQuery = "SELECT * FROM " + TABLE_PAY_PERIODS + " WHERE id == " + id;
 		SQLiteDatabase db = this.getReadableDatabase();
@@ -302,7 +322,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		}
 		db.close();
 		return entries;
-
 	}
 
 	public void deleteEntriesOlderThanDate(Date date) {
@@ -426,6 +445,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		values.put(JOB_DEDUCTION, job.getDeduction());
 		values.put(JOB_TAX_PERCENTAGE, job.getTaxPercentage());
 		values.put(JOB_TIME_PER_DAY, job.getTimePerDate());
+		values.put(JOB_STARTED_WORKING_AT, job.getStartWorkAt());
 
 		// insert row
 		long job_id = db.insert(TABLE_JOB, null, values);
@@ -437,7 +457,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			}
 		}
 
-		 db.close();
+		db.close();
 		return job_id;
 	}
 
@@ -460,7 +480,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		}
 
 		// c.close();
-		 db.close();
+		db.close();
 		return jobs;
 	}
 

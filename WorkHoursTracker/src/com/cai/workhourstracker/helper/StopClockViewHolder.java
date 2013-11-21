@@ -94,7 +94,7 @@ public class StopClockViewHolder {
 
 	public StopClockViewHolder(View view) {
 
-		comment = (TextView) view.findViewById(R.id.comment);
+		comment = (TextView) view.findViewById(R.id.start_stop_row_comment);
 		fullDate = (TextView) view.findViewById(R.id.full_date);
 		id = (TextView) view.findViewById(R.id.entry_id);
 		workHours = (TextView) view.findViewById(R.id.stop_start_clock_row_work_hours);

@@ -64,8 +64,29 @@
                 android:value="com.cai.workhourstracker.SingleEntryActivity" />
         </activity>
 
-        <receiver android:name=".receiver.AlarmReceiver" >
+        <receiver android:name="com.cai.workhourstracker.receiver.AlarmReceiver" >
         </receiver>
+
+        <activity
+            android:name="com.cai.workhourstracker.EntriesGroupListActivity"
+            android:label="@string/title_activity_entries_group_list"
+            android:parentActivityName="com.cai.workhourstracker.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cai.workhourstracker.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.cai.workhourstracker.BaseEntriesListActivity"
+            android:label="@string/title_activity_base_entries_list" >
+        </activity>
+        <activity
+            android:name="com.cai.workhourstracker.PayPeriodsGroupListActivity"
+            android:label="@string/title_activity_pay_periods_group_list"
+            android:parentActivityName="com.cai.workhourstracker.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cai.workhourstracker.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
