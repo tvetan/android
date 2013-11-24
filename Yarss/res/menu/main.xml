@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/btn_manage_feets"
+        android:icon="@drawable/ic_action_new"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="@string/add_address"/>
+    <item
+        android:id="@+id/btn_refresh_feeds"
+        android:icon="@drawable/ic_action_new_label"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="@string/refresh_feeds"/>
+
+</menu>
